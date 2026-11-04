@@ -2,7 +2,7 @@
   "voices": {
     "faber": {
       "repo": "csukuangfj/vits-piper-pt_BR-faber-medium",
-      "revision": "",
+      "revision": "main",
       "files": [
         {
           "relPath": "espeak-ng-data/intonations",
@@ -58,7 +58,7 @@
     },
     "cadu": {
       "repo": "csukuangfj/vits-piper-pt_BR-cadu-medium",
-      "revision": "",
+      "revision": "main",
       "files": [
         {
           "relPath": "espeak-ng-data/intonations",
@@ -114,7 +114,7 @@
     },
     "jeff": {
       "repo": "csukuangfj/vits-piper-pt_BR-jeff-medium",
-      "revision": "",
+      "revision": "main",
       "files": [
         {
           "relPath": "espeak-ng-data/intonations",

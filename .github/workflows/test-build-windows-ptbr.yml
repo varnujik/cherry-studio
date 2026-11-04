@@ -35,7 +35,8 @@ jobs:
             src/main/ai/localModel/runtime/__tests__/inferenceEntryTts.test.ts \
             src/main/ai/voice/__tests__/localAdapters.test.ts \
             src/main/ai/voice/__tests__/voicePlatform.test.ts \
-            src/main/ai/voice/localAdapters/__tests__/kokoroTts.test.ts
+            src/main/ai/voice/localAdapters/__tests__/kokoroTts.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/piperTts.test.ts
           pnpm test:shared src/shared/ipc/schemas/__tests__/voice.test.ts
           pnpm test:renderer src/renderer/pages/settings/VoiceSettings/__tests__/VoiceSettings.test.tsx src/renderer/i18n/__tests__/resolver.test.ts
           pnpm test:scripts scripts/__tests__/painting-template-catalog.test.ts
