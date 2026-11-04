@@ -1,0 +1,61 @@
+# Test-only workflow for the varnujik fork. Not part of any upstream pull request.
+name: Test build (Windows, pt-BR)
+
+on:
+  push:
+    branches:
+      - test/windows-build-ptbr
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".node-version"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: i18n check
+        run: pnpm i18n:check
+      - name: Tests for changed files
+        run: |
+          pnpm test:main \
+            src/main/i18n/__tests__/index.test.ts \
+            src/main/services/__tests__/TopicNamingService.test.ts \
+            src/main/ai/localModel/__tests__/LocalModelService.test.ts \
+            src/main/ai/localModel/catalog/__tests__/catalog.test.ts \
+            src/main/ai/localModel/runtime/__tests__/KokoroTts.test.ts \
+            src/main/ai/localModel/runtime/__tests__/inferenceEntryTts.test.ts \
+            src/main/ai/voice/__tests__/localAdapters.test.ts \
+            src/main/ai/voice/__tests__/voicePlatform.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/kokoroTts.test.ts
+          pnpm test:shared src/shared/ipc/schemas/__tests__/voice.test.ts
+          pnpm test:renderer src/renderer/pages/settings/VoiceSettings/__tests__/VoiceSettings.test.tsx src/renderer/i18n/__tests__/resolver.test.ts
+          pnpm test:scripts scripts/__tests__/painting-template-catalog.test.ts
+
+  build-windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".node-version"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install
+      - name: Build Windows x64
+        run: pnpm build:win:x64
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cherry-studio-windows-x64-ptbr
+          path: |
+            dist/*.exe
+          retention-days: 7

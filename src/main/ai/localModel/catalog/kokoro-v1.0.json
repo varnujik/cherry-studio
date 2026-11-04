@@ -1,7 +1,7 @@
 {
   "repo": "csukuangfj/kokoro-int8-multi-lang-v1_0",
-  "revision": "",
-  "upstreamRevision": "",
+  "revision": "main",
+  "upstreamRevision": "main",
   "files": [
     {
       "relPath": "LICENSE",
