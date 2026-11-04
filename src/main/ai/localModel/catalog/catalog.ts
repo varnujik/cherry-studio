@@ -1,5 +1,6 @@
 import { DEFAULT_LOCAL_MODEL_BUNDLE_BY_CAPABILITY, type LocalModelBundleId } from '@shared/data/presets/localModel'
 
+import kokoroV1Release from './kokoro-v1.0.json'
 import kokoroRelease from './kokoro-v1.1.json'
 import mlxNodeRelease from './mlxNodeRelease.json'
 import qwen3AsrRelease from './qwen3AsrRelease.json'
@@ -231,6 +232,55 @@ export const LOCAL_MODEL_BUNDLES = {
       sources: [
         { source: 'huggingface', repo: kokoroRelease.repo, revision: kokoroRelease.revision, remoteFile: file.relPath },
         { source: 'hf-mirror', repo: kokoroRelease.repo, revision: kokoroRelease.revision, remoteFile: file.relPath }
+      ]
+    }))
+  },
+  // Kokoro v1.0 is the multilingual release; this bundle carries only the Brazilian
+  // Portuguese voices' eSpeak data. The int8 weights keep the download near 140 MB.
+  'kokoro-int8-multi-lang-v1.0': {
+    id: 'kokoro-int8-multi-lang-v1.0',
+    capability: 'tts',
+    installDirKey: 'feature.tts.kokoro_v1',
+    requires: ['sherpa-onnx'],
+    runtime: { architecture: 'kokoro-v1' },
+    provenance: {
+      license: {
+        spdx: 'Apache-2.0',
+        url: `https://huggingface.co/${kokoroV1Release.repo}/blob/${kokoroV1Release.revision}/LICENSE`
+      },
+      upstream: {
+        url: 'https://huggingface.co/hexgrad/Kokoro-82M',
+        revision: kokoroV1Release.upstreamRevision
+      },
+      conversion: {
+        url: `https://huggingface.co/${kokoroV1Release.repo}`,
+        revision: kokoroV1Release.revision,
+        license: {
+          spdx: 'Apache-2.0',
+          url: `https://huggingface.co/${kokoroV1Release.repo}/blob/${kokoroV1Release.revision}/LICENSE`
+        }
+      }
+    },
+    files: kokoroV1Release.files.map((file) => ({
+      key: file.relPath,
+      relPath: file.relPath,
+      sha256: file.sha256,
+      sizeBytes: file.sizeBytes,
+      minBytes: file.sizeBytes,
+      weight: Math.max(0.01, file.sizeBytes / 1_000_000),
+      sources: [
+        {
+          source: 'huggingface',
+          repo: kokoroV1Release.repo,
+          revision: kokoroV1Release.revision,
+          remoteFile: file.relPath
+        },
+        {
+          source: 'hf-mirror',
+          repo: kokoroV1Release.repo,
+          revision: kokoroV1Release.revision,
+          remoteFile: file.relPath
+        }
       ]
     }))
   },
