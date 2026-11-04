@@ -37,7 +37,7 @@ afterEach(async () => {
 
 function speak(definition: typeof piperFaberSpeechDefinition, options: { voice: string; language: string }) {
   const operation = definition.speechOperations[0] as ReturnType<typeof completeSpeechOperation>
-  return operation.start({ text: 'Olá' }, options, undefined as never).output
+  return operation.start({ kind: 'text', text: 'Olá' }, options, undefined as never).output
 }
 
 describe.each([
