@@ -329,6 +329,20 @@ comes from lexicon files; upgrading the runtime requires a Portuguese lexicon or
 phonemizer for this bundle. The worker keeps one resident Kokoro model and reloads it when a
 request targets the other bundle's directory.
 
+### Piper Brazilian Portuguese speech
+
+Three Piper voices (`piper-pt-br-faber-medium`, `piper-pt-br-cadu-medium`,
+`piper-pt-br-jeff-medium`) are separate bundles of about 62 MB each, so a user downloads one
+voice and adds others later. Each is a single-speaker VITS model from the sherpa-onnx
+conversion of `rhasspy/piper-voices`, installed as `model.onnx` with `tokens.txt` and the same
+Portuguese eSpeak subset as the Kokoro v1.0 bundle. The worker loads them with the `piper`
+architecture through the same resident sherpa-onnx model slot as Kokoro. The voice datasets are
+CC0, but the weights are fine-tuned from Piper's English voices, whose dataset terms should be
+checked before distribution.
+
+The Kokoro v1.0 bundle also exposes `ef_dora` (28) and `if_sara` (35), Spanish and Italian
+voices that read Portuguese phonemes with an accent, as extra pt-BR voices.
+
 ## Management plane
 
 Commands use one generic IPC surface (`local_model.*`), addressed by bundle id:

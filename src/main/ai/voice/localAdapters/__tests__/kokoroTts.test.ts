@@ -119,21 +119,26 @@ describe('Kokoro Chinese-English speech', () => {
 })
 
 describe('Kokoro v1.0 Brazilian Portuguese speech', () => {
-  it('lists the three pt-BR voices and defaults to pf_dora', async () => {
+  it('lists the five pt-BR voices, native ones first, and defaults to pf_dora', async () => {
     const voices = await kokoroV1SpeechDefinition.voices()
-    expect(voices.map((voice) => voice.id)).toEqual(['pf_dora', 'pm_alex', 'pm_santa'])
+    expect(voices.map((voice) => voice.id)).toEqual(['pf_dora', 'pm_alex', 'pm_santa', 'ef_dora', 'if_sara'])
+    expect(voices.slice(3).map((voice) => voice.name)).toEqual(['ef_dora (es)', 'if_sara (it)'])
     expect(voices.every((voice) => voice.locale === 'pt-BR' && voice.languages?.join() === 'pt-BR')).toBe(true)
     expect((await kokoroV1SpeechDefinition.getDefaultVoice('pt-BR'))?.id).toBe('pf_dora')
     expect(await kokoroV1SpeechDefinition.getDefaultVoice('zh-CN')).toBeNull()
   })
 
-  it('synthesizes through the v1.0 bundle with the published speaker ID', async () => {
+  it.each([
+    ['pm_alex', '43'],
+    ['ef_dora', '28'],
+    ['if_sara', '35']
+  ])('synthesizes %s through the v1.0 bundle with the published speaker ID %s', async (voice, sid) => {
     synthesize.mockImplementation(async (modelId, input) => {
       expect(modelId).toBe(KOKORO_V1_TTS_BUNDLE_ID)
-      expect(input).toMatchObject({ text: 'Olá', voice: '43', language: 'pt-BR', speed: 1 })
+      expect(input).toMatchObject({ text: 'Olá', voice: sid, language: 'pt-BR', speed: 1 })
       await writeFile(input.outputPath, wav)
     })
-    const result = await createKokoroV1SpeechModel({ voice: 'pm_alex', language: 'pt-BR' }).doGenerate({ text: 'Olá' })
+    const result = await createKokoroV1SpeechModel({ voice, language: 'pt-BR' }).doGenerate({ text: 'Olá' })
     expect(result.audio).toEqual(new Uint8Array(wav))
     expect(refreshStatus).toHaveBeenCalledWith(KOKORO_V1_TTS_BUNDLE_ID)
     expect(await readdir(directory)).toEqual([])

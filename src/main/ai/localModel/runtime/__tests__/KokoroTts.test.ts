@@ -125,3 +125,49 @@ it('configures the int8 pt-br model without lexicons and reloads when the model 
   expect(configs[1].model.kokoro.model).toBe(join(second, 'model.int8.onnx'))
   expect(process.env.ESPEAK_DATA_PATH).toBe(join(second, 'espeak-ng-data'))
 })
+
+it('configures a Piper voice as a single-speaker VITS model with no kokoro section', async () => {
+  directory = await mkdtemp(join(tmpdir(), 'piper-runtime-'))
+  const packageDir = join(directory, 'node_modules', 'sherpa-onnx-node')
+  await mkdir(packageDir, { recursive: true })
+  await writeFile(
+    join(packageDir, 'index.js'),
+    `
+    const fs = require('node:fs');
+    module.exports = {
+      OfflineTts: { createAsync: async config => {
+        fs.appendFileSync(process.env.KOKORO_TEST_LOG, JSON.stringify(config) + '\\n');
+        return { generate: () => ({ samples: new Float32Array([0, 0.5]), sampleRate: 22050 }) };
+      }},
+      writeWave: (filename) => fs.writeFileSync(filename, 'wav')
+    };
+  `
+  )
+  const log = join(directory, 'configs.log')
+  vi.stubEnv('KOKORO_TEST_LOG', log)
+  const modelDir = join(directory, 'piper')
+  await new KokoroTts(directory).synthesize(
+    {
+      architecture: 'piper',
+      modelDir,
+      text: 'Olá',
+      voice: '0',
+      language: 'pt-BR',
+      speed: 1,
+      outputPath: join(directory, 'speech.wav')
+    },
+    new AbortController().signal
+  )
+  const [config] = (await readFile(log, 'utf8'))
+    .trim()
+    .split('\n')
+    .map((line) => JSON.parse(line))
+  expect(config.ruleFsts).toBe('')
+  expect(config.model).not.toHaveProperty('kokoro')
+  expect(config.model.vits).toEqual({
+    model: join(modelDir, 'model.onnx'),
+    tokens: join(modelDir, 'tokens.txt'),
+    dataDir: join(modelDir, 'espeak-ng-data')
+  })
+  expect(process.env.ESPEAK_DATA_PATH).toBe(join(modelDir, 'espeak-ng-data'))
+})

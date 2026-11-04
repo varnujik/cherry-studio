@@ -12,7 +12,7 @@ export interface TtsSynthesizeInput {
 export type TtsInferenceContract = {
   methods: {
     synthesize: UtilityProcessMethod<
-      TtsSynthesizeInput & { modelDir: string; architecture: 'qwen3-tts' | 'kokoro' | 'kokoro-v1' },
+      TtsSynthesizeInput & { modelDir: string; architecture: 'qwen3-tts' | 'kokoro' | 'kokoro-v1' | 'piper' },
       void
     >
   }

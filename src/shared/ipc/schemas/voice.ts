@@ -6,6 +6,9 @@ import {
   QWEN3_TTS_MODEL_ID,
   KOKORO_TTS_MODEL_ID,
   KOKORO_V1_TTS_MODEL_ID,
+  PIPER_FABER_TTS_MODEL_ID,
+  PIPER_CADU_TTS_MODEL_ID,
+  PIPER_JEFF_TTS_MODEL_ID,
   FUNASR_MODEL_ID,
   QWEN3_ASR_MODEL_ID,
   LOCAL_VOICE_MODEL_IDS,
@@ -67,7 +70,16 @@ const asrModelId = z.enum([APPLE_ASR_MODEL_ID, WINDOWS_ASR_MODEL_ID, FUNASR_MODE
 const speechInput = sessionAdmission
   .extend({
     modelId: z
-      .enum([APPLE_TTS_MODEL_ID, WINDOWS_TTS_MODEL_ID, QWEN3_TTS_MODEL_ID, KOKORO_TTS_MODEL_ID, KOKORO_V1_TTS_MODEL_ID])
+      .enum([
+        APPLE_TTS_MODEL_ID,
+        WINDOWS_TTS_MODEL_ID,
+        QWEN3_TTS_MODEL_ID,
+        KOKORO_TTS_MODEL_ID,
+        KOKORO_V1_TTS_MODEL_ID,
+        PIPER_FABER_TTS_MODEL_ID,
+        PIPER_CADU_TTS_MODEL_ID,
+        PIPER_JEFF_TTS_MODEL_ID
+      ])
       .optional(),
     text: z.string().trim().min(1).max(10_000),
     preferStream: z.boolean().optional(),
@@ -176,7 +188,10 @@ const speechModelId = z.enum([
   WINDOWS_TTS_MODEL_ID,
   QWEN3_TTS_MODEL_ID,
   KOKORO_TTS_MODEL_ID,
-  KOKORO_V1_TTS_MODEL_ID
+  KOKORO_V1_TTS_MODEL_ID,
+  PIPER_FABER_TTS_MODEL_ID,
+  PIPER_CADU_TTS_MODEL_ID,
+  PIPER_JEFF_TTS_MODEL_ID
 ])
 
 export const voiceRequestSchemas = {
