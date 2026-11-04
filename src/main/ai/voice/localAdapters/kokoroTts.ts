@@ -14,6 +14,9 @@ import {
   KOKORO_TTS_MODEL_ID,
   KOKORO_V1_TTS_BUNDLE_ID,
   KOKORO_V1_TTS_MODEL_ID,
+  DOWNLOADABLE_SPEECH_BUNDLES,
+  QWEN3_TTS_MODEL_ID,
+  type LocalSpeechModelId,
   LOCAL_VOICE_MODELS,
   MAX_SPEECH_SPEED,
   MIN_SPEECH_SPEED,
@@ -29,13 +32,16 @@ import { checkAbort, VoiceRuntimeError } from '../VoiceRuntimeError'
 import { withScratch } from './scratch'
 import { completeSpeechOperation } from './sdkOperations'
 
-type KokoroModelId = typeof KOKORO_TTS_MODEL_ID | typeof KOKORO_V1_TTS_MODEL_ID
-type KokoroBundleId = typeof KOKORO_TTS_BUNDLE_ID | typeof KOKORO_V1_TTS_BUNDLE_ID
+type SherpaSpeechModelId = Exclude<
+  keyof typeof DOWNLOADABLE_SPEECH_BUNDLES & LocalSpeechModelId,
+  typeof QWEN3_TTS_MODEL_ID
+>
+type SherpaSpeechBundleId = (typeof DOWNLOADABLE_SPEECH_BUNDLES)[SherpaSpeechModelId]
 
-/** One downloadable Kokoro release: its voices, the speaker id each maps to, and its languages. */
-interface KokoroVariant {
-  modelId: KokoroModelId
-  bundleId: KokoroBundleId
+/** One downloadable sherpa-onnx speech bundle: its voices, the speaker id each maps to, and its languages. */
+export interface SherpaSpeechVariant {
+  modelId: SherpaSpeechModelId
+  bundleId: SherpaSpeechBundleId
   languages: readonly string[]
   voices: LocalSpeechVoice[]
   /** Speaker id in the release's `voices.bin`, keyed by voice id. */
@@ -50,7 +56,7 @@ const V1_1_VOICE_IDS = [
   ...Array.from({ length: 55 }, (_, index) => `zf_${String(index + 1).padStart(3, '0')}`),
   ...Array.from({ length: 45 }, (_, index) => `zm_${String(index + 1).padStart(3, '0')}`)
 ]
-const KOKORO_V1_1: KokoroVariant = {
+const KOKORO_V1_1: SherpaSpeechVariant = {
   modelId: KOKORO_TTS_MODEL_ID,
   bundleId: KOKORO_TTS_BUNDLE_ID,
   languages: V1_1_LANGUAGES,
@@ -63,19 +69,22 @@ const KOKORO_V1_1: KokoroVariant = {
   speakerIds: new Map(V1_1_VOICE_IDS.map((id, index) => [id, index]))
 }
 
-// Speaker ids come from the v1.0 model metadata (`speaker2id`): pf_dora=42, pm_alex=43, pm_santa=44.
+// Speaker ids come from the v1.0 model metadata (`speaker2id`). The native Brazilian voices
+// come first; ef_dora and if_sara are Spanish/Italian voices reading pt-BR phonemes (accented).
 const V1_LANGUAGES = ['pt-BR'] as const
 const V1_VOICES = [
-  ['pf_dora', 42],
-  ['pm_alex', 43],
-  ['pm_santa', 44]
+  ['pf_dora', 'pf_dora', 42],
+  ['pm_alex', 'pm_alex', 43],
+  ['pm_santa', 'pm_santa', 44],
+  ['ef_dora', 'ef_dora (es)', 28],
+  ['if_sara', 'if_sara (it)', 35]
 ] as const
-const KOKORO_V1: KokoroVariant = {
+const KOKORO_V1: SherpaSpeechVariant = {
   modelId: KOKORO_V1_TTS_MODEL_ID,
   bundleId: KOKORO_V1_TTS_BUNDLE_ID,
   languages: V1_LANGUAGES,
-  voices: V1_VOICES.map(([id]) => ({ id, name: id, locale: 'pt-BR', languages: V1_LANGUAGES })),
-  speakerIds: new Map(V1_VOICES)
+  voices: V1_VOICES.map(([id, name]) => ({ id, name, locale: 'pt-BR', languages: V1_LANGUAGES })),
+  speakerIds: new Map(V1_VOICES.map(([id, , speaker]) => [id, speaker]))
 }
 
 export function kokoroTtsSupport(environment: VoiceEnvironment) {
@@ -87,7 +96,7 @@ export function kokoroTtsSupport(environment: VoiceEnvironment) {
 
 export function getKokoroTtsStatus(
   signal?: AbortSignal,
-  bundleId: KokoroBundleId = KOKORO_TTS_BUNDLE_ID
+  bundleId: SherpaSpeechBundleId = KOKORO_TTS_BUNDLE_ID
 ): LocalVoiceStatus {
   checkAbort(signal)
   const { status } = application.get('LocalModelService').refreshStatus(bundleId)
@@ -125,7 +134,7 @@ function normalizeFailure(error: unknown, signal?: AbortSignal): VoiceRuntimeErr
   return new VoiceRuntimeError('operation_failed')
 }
 
-function createVariantSpeechModel(variant: KokoroVariant, options: SpeechOptions): SpeechModelV3 {
+export function createVariantSpeechModel(variant: SherpaSpeechVariant, options: SpeechOptions): SpeechModelV3 {
   return {
     specificationVersion: 'v3',
     provider: 'local-voice',
@@ -184,8 +193,8 @@ export function createKokoroV1SpeechModel(options: SpeechOptions): SpeechModelV3
   return createVariantSpeechModel(KOKORO_V1, options)
 }
 
-function createKokoroDefinition(
-  variant: KokoroVariant,
+export function createSherpaSpeechDefinition(
+  variant: SherpaSpeechVariant,
   createModel: (options: SpeechOptions) => SpeechModelV3
 ): SpeechModelDefinition {
   return {
@@ -224,5 +233,5 @@ function createKokoroDefinition(
   }
 }
 
-export const kokoroSpeechDefinition = createKokoroDefinition(KOKORO_V1_1, createKokoroSpeechModel)
-export const kokoroV1SpeechDefinition = createKokoroDefinition(KOKORO_V1, createKokoroV1SpeechModel)
+export const kokoroSpeechDefinition = createSherpaSpeechDefinition(KOKORO_V1_1, createKokoroSpeechModel)
+export const kokoroV1SpeechDefinition = createSherpaSpeechDefinition(KOKORO_V1, createKokoroV1SpeechModel)

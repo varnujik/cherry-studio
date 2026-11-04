@@ -18,22 +18,35 @@ type KokoroArchitecture = TtsInferenceContract['methods']['synthesize']['input']
  * v1.1-zh mixes Chinese and English through both lexicons and leaves the language unset.
  * v1.0 ships multilingual voices; non-lexicon languages go through eSpeak, so the bundle
  * pins `lang` (sherpa-onnx 1.x) and carries only that language's eSpeak data.
+ * Piper voices are single-speaker VITS models phonemized by eSpeak; they share this worker.
  */
 function kokoroModelConfig(modelDir: string, architecture: KokoroArchitecture) {
   const dataDir = join(modelDir, 'espeak-ng-data')
+  if (architecture === 'piper')
+    return {
+      dataDir,
+      model: { vits: { model: join(modelDir, 'model.onnx'), tokens: join(modelDir, 'tokens.txt'), dataDir } },
+      ruleFsts: ''
+    }
   const common = {
     voices: join(modelDir, 'voices.bin'),
     tokens: join(modelDir, 'tokens.txt'),
     dataDir
   }
   if (architecture === 'kokoro-v1')
-    return { dataDir, kokoro: { ...common, model: join(modelDir, 'model.int8.onnx'), lang: 'pt-br' }, ruleFsts: '' }
+    return {
+      dataDir,
+      model: { kokoro: { ...common, model: join(modelDir, 'model.int8.onnx'), lang: 'pt-br' } },
+      ruleFsts: ''
+    }
   return {
     dataDir,
-    kokoro: {
-      ...common,
-      model: join(modelDir, 'model.onnx'),
-      lexicon: ['lexicon-us-en.txt', 'lexicon-zh.txt'].map((file) => join(modelDir, file)).join(',')
+    model: {
+      kokoro: {
+        ...common,
+        model: join(modelDir, 'model.onnx'),
+        lexicon: ['lexicon-us-en.txt', 'lexicon-zh.txt'].map((file) => join(modelDir, file)).join(',')
+      }
     },
     ruleFsts: ['date-zh.fst', 'number-zh.fst', 'phone-zh.fst'].map((file) => join(modelDir, file)).join(',')
   }
@@ -57,7 +70,7 @@ export class KokoroTts {
         process.env.ESPEAK_DATA_PATH = config.dataDir
         this.model = await this.runtime.OfflineTts.createAsync({
           model: {
-            kokoro: config.kokoro,
+            ...config.model,
             numThreads: 2,
             provider: 'cpu',
             debug: false

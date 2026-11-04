@@ -63,7 +63,10 @@ export class TtsInferenceService extends InferenceServiceBase<TtsInferenceContra
         const architecture = bundle.runtime?.architecture
         if (
           bundle.capability !== 'tts' ||
-          (architecture !== 'qwen3-tts' && architecture !== 'kokoro' && architecture !== 'kokoro-v1')
+          (architecture !== 'qwen3-tts' &&
+            architecture !== 'kokoro' &&
+            architecture !== 'kokoro-v1' &&
+            architecture !== 'piper')
         )
           throw new Error('Unsupported speech model')
         const modelDir = localModelStorageService.resolveInstalledDir(bundle)
