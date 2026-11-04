@@ -128,6 +128,21 @@ describe('local model catalog', () => {
     )
   })
 
+  it('pins every Kokoro v1.0 file with a digest and size and requires the Sherpa runtime', () => {
+    const bundle = LOCAL_MODEL_BUNDLES['kokoro-int8-multi-lang-v1.0']
+
+    expect(bundle.runtime).toEqual({ architecture: 'kokoro-v1' })
+    expect(bundle.requires).toContain('sherpa-onnx')
+    expect(bundle.files.length).toBeGreaterThan(0)
+    expect(bundle.files.map((file) => file.relPath)).toEqual(
+      expect.arrayContaining(['model.int8.onnx', 'voices.bin', 'tokens.txt'])
+    )
+    for (const file of bundle.files) {
+      expect(file.sha256, `${file.relPath} has no sha256`).toMatch(/^[0-9a-f]{64}$/)
+      expect(file.minBytes, `${file.relPath} has no size floor`).toBeGreaterThan(0)
+    }
+  })
+
   it('derives the FunASR platform contract from the sherpa artifact matrix', () => {
     const sherpa = SHARED_ARTIFACTS['sherpa-onnx']
 

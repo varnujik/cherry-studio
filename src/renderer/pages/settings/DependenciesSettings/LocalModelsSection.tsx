@@ -35,6 +35,11 @@ const MODEL_CARDS = {
     nameKey: 'settings.voice.model.kokoro_tts',
     sources: ['csukuangfj/kokoro-multi-lang-v1_1']
   },
+  'kokoro-int8-multi-lang-v1.0': {
+    icon: <Volume2 className="size-5" />,
+    nameKey: 'settings.voice.model.kokoro_v1_tts',
+    sources: ['csukuangfj/kokoro-int8-multi-lang-v1_0']
+  },
   'qwen3-tts-0.6b-customvoice-8bit': {
     icon: <Volume2 className="size-5" />,
     nameKey: 'settings.voice.model.qwen3_tts',

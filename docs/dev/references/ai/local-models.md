@@ -313,6 +313,22 @@ Chinese and English. Language preferences select a default voice; they do not sp
 text into separate synthesis requests. The existing host stops the process before changing
 model bundles, on cancellation, or before removing resident model files.
 
+### Kokoro Brazilian Portuguese speech
+
+The `kokoro-int8-multi-lang-v1.0` bundle is a second, independent Kokoro install for
+Brazilian Portuguese. Kokoro v1.1-zh has no Portuguese voices, so this bundle pins the
+multilingual Kokoro v1.0 int8 weights (about 140 MB in total), the `voices.bin` table and only
+the eSpeak data Portuguese needs (`pt_dict`, `lang/roa/pt`, `lang/roa/pt-BR` and the shared
+phoneme tables). It exposes the three Brazilian voices from the v1.0 speaker table:
+`pf_dora` (42), `pm_alex` (43) and `pm_santa` (44).
+
+The worker loads it with the `kokoro-v1` architecture: no lexicon, no Chinese rule FSTs, and
+`lang: 'pt-br'`, which makes sherpa-onnx phonemize every request through eSpeak. That option
+exists in the pinned sherpa-onnx 1.x runtime but is removed in sherpa-onnx 2.0, where language
+comes from lexicon files; upgrading the runtime requires a Portuguese lexicon or an external
+phonemizer for this bundle. The worker keeps one resident Kokoro model and reloads it when a
+request targets the other bundle's directory.
+
 ## Management plane
 
 Commands use one generic IPC surface (`local_model.*`), addressed by bundle id:
