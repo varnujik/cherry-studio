@@ -8,6 +8,7 @@ import { application } from '@application'
 import { PIPER_CADU_TTS_BUNDLE_ID, PIPER_FABER_TTS_BUNDLE_ID, PIPER_JEFF_TTS_BUNDLE_ID } from '@shared/ai/localVoice'
 
 import { piperCaduSpeechDefinition, piperFaberSpeechDefinition, piperJeffSpeechDefinition } from '../piperTts'
+import type { completeSpeechOperation } from '../sdkOperations'
 
 const synthesize = vi.fn()
 const refreshStatus = vi.fn()
@@ -35,7 +36,7 @@ afterEach(async () => {
 })
 
 function speak(definition: typeof piperFaberSpeechDefinition, options: { voice: string; language: string }) {
-  const operation = definition.speechOperations[0]
+  const operation = definition.speechOperations[0] as ReturnType<typeof completeSpeechOperation>
   return operation.start({ text: 'Olá' }, options, undefined as never).output
 }
 
