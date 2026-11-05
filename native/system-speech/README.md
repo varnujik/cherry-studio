@@ -57,7 +57,7 @@ packaging are architecture-gated; Windows ARM64 system speech is unsupported
 without blocking ARM64 application packages. See the [Windows helper guide](./windows/README.md)
 for build prerequisites, independent protocol and real ASR/TTS smokes, packaged
 helper signature checks, and the remaining NSIS/portable device acceptance.
-The native synthesis protocol requires an explicit `speed` from 0.5 to 2;
+The native synthesis protocol requires an explicit `speed` from 0.1 to 5;
 Apple and Windows adapters both forward the selected speed.
 
 ## Apple PCM streaming

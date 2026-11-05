@@ -46,12 +46,12 @@ extension NativeRequest {
         case .transcribe:
             return .transcribe(locale: try required(locale), inputPath: try required(inputPath))
         case .synthesizeStream:
-            guard let speed, speed.isFinite, (0.5 ... 2.0).contains(speed) else {
+            guard let speed, speed.isFinite, (0.1 ... 5.0).contains(speed) else {
                 throw HelperError(code: .invalidRequest)
             }
             return .synthesizeStream(voiceId: try required(voiceId), text: try required(text), speed: speed)
         case .synthesize:
-            guard let speed, speed.isFinite, (0.5 ... 2.0).contains(speed) else {
+            guard let speed, speed.isFinite, (0.1 ... 5.0).contains(speed) else {
                 throw HelperError(code: .invalidRequest)
             }
             return .synthesize(

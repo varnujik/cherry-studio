@@ -110,7 +110,7 @@ async function protocolSmoke(helperPath) {
     JSON.stringify({ operation: 'probe_asr' }),
     JSON.stringify({ operation: 'probe_asr', locale: '' }),
     JSON.stringify(synthesis),
-    ...[null, '1', 0.49, 2.01].map((speed) => JSON.stringify({ ...synthesis, speed }))
+    ...[null, '1', 0.09, 5.01].map((speed) => JSON.stringify({ ...synthesis, speed }))
   ]
   for (const input of invalid) {
     const response = invokeRaw(helperPath, input, nativeResponseSchema)
@@ -129,7 +129,7 @@ async function ttsSmoke(helperPath, voices) {
   const directory = mkdtempSync(join(tmpdir(), 'cherry speech-测试-'))
   const frameCounts = []
   try {
-    for (const speed of [0.5, 1, 2]) {
+    for (const speed of [0.1, 1, 5]) {
       const outputPath = join(directory, `speech-${speed}.wav`)
       const response = await client.request({
         operation: 'synthesize',

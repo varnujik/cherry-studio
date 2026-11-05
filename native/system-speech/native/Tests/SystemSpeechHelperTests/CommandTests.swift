@@ -86,8 +86,8 @@ struct CommandTests {
 
     @Test(arguments: [
         #"{"operation":"synthesize","voiceId":"voice","text":"hello","outputPath":"/tmp/output.wav"}"#,
-        #"{"operation":"synthesize","voiceId":"voice","text":"hello","outputPath":"/tmp/output.wav","speed":0.49}"#,
-        #"{"operation":"synthesize","voiceId":"voice","text":"hello","outputPath":"/tmp/output.wav","speed":2.01}"#,
+        #"{"operation":"synthesize","voiceId":"voice","text":"hello","outputPath":"/tmp/output.wav","speed":0.09}"#,
+        #"{"operation":"synthesize","voiceId":"voice","text":"hello","outputPath":"/tmp/output.wav","speed":5.01}"#,
     ])
     func rejectsMissingOrUnsupportedSynthesisSpeed(json: String) throws {
         let request = try JSONDecoder().decode(NativeRequest.self, from: Data(json.utf8))

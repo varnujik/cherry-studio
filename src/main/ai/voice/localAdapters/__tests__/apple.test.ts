@@ -226,10 +226,12 @@ describe('local Apple adapters', () => {
 
   it.each([
     { requestedSpeed: undefined, expectedSpeed: 1 },
+    { requestedSpeed: 0.1, expectedSpeed: 0.1 },
     { requestedSpeed: 0.5, expectedSpeed: 0.5 },
     { requestedSpeed: 1, expectedSpeed: 1 },
     { requestedSpeed: 1.25, expectedSpeed: 1.25 },
-    { requestedSpeed: 2, expectedSpeed: 2 }
+    { requestedSpeed: 2, expectedSpeed: 2 },
+    { requestedSpeed: 5, expectedSpeed: 5 }
   ])('passes $expectedSpeed× speed to the native helper', async ({ requestedSpeed, expectedSpeed }) => {
     await createAppleSpeechModel({ voice: 'voice.exact', speed: requestedSpeed }).doGenerate({
       text: 'private speed canary'
@@ -242,7 +244,7 @@ describe('local Apple adapters', () => {
     })
   })
 
-  it.each([0.49, 2.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
+  it.each([0.09, 5.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY])(
     'rejects unsupported speech speed %s before native work',
     async (speed) => {
       await expect(

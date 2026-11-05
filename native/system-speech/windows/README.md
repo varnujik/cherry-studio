@@ -10,9 +10,9 @@ uses cloud recognition. An omitted language uses `en-US` for both readiness and
 transcription. Windows ASR has no asset installation operation.
 
 Windows x64 system TTS uses installed SAPI 5 voice tokens and writes mono 16 kHz
-PCM16 WAV files. It requires an exact `voiceId` and a numeric `speed` from 0.5 to
-2; missing voices are never substituted. The speed maps to SAPI's integer rate
-range, so it is a relative voice setting rather than a guaranteed duration ratio.
+PCM16 WAV files. It requires an exact `voiceId` and a numeric `speed` from 0.1 to
+5; missing voices are never substituted. The speed maps to SAPI's integer rate
+range (clamped to -10..10), so it is a relative voice setting rather than a guaranteed duration ratio.
 Windows ARM64 system speech remains unsupported; ARM64 application packaging
 neither builds nor includes this helper.
 
@@ -64,7 +64,7 @@ The protocol smoke needs no voice or recognizer: it checks typed responses,
 voice enumeration with an unsupported ASR locale, malformed requests, required
 speed bounds, invalid ASR probes and exact missing-voice/recognizer failure. The TTS smoke **requires an installed
 SAPI voice** and fails explicitly if none exists. It checks actual PCM data and
-metadata, a Unicode path and text, 0.5/1/2 speed settings, cancellation and timeout,
+metadata, a Unicode path and text, 0.1/1/5 speed settings, cancellation and timeout,
 then removes its temporary files. It does not play audio.
 The regression mocks the helper and does not recognize speech; only a successful
 Windows run of the native smokes is native execution evidence.

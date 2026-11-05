@@ -44,8 +44,8 @@ export const FUNASR_SUPPORTED_PLATFORM_KEYS = SHERPA_VOICE_SUPPORTED_PLATFORM_KE
 export const DEFAULT_APPLE_ASR_LOCALE = 'en-US'
 export const DEFAULT_WINDOWS_ASR_LOCALE = 'en-US'
 
-export const MIN_SPEECH_SPEED = 0.5
-export const MAX_SPEECH_SPEED = 2
+export const MIN_SPEECH_SPEED = 0.1
+export const MAX_SPEECH_SPEED = 5
 export const DEFAULT_SPEECH_SPEED = 1
 
 export const VOICE_SESSION_SOURCES = ['settings', 'dictation', 'playback', 'automation'] as const

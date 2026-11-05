@@ -57,7 +57,9 @@ import {
   TranscriptionLanguageSource,
   VoiceResourceOperation,
   type LocalVoiceModelId,
-  type LocalTranscriptionModelId
+  type LocalTranscriptionModelId,
+  MAX_SPEECH_SPEED,
+  MIN_SPEECH_SPEED
 } from '@shared/ai/localVoice'
 import { LOCAL_MODEL_STATUS_CACHE_KEY } from '@shared/data/presets/localModel'
 import type { VoiceErrorReason } from '@shared/ipc/errors/voice'
@@ -1198,8 +1200,8 @@ function VoiceSettings() {
           <InputNumber
             className="w-24"
             aria-label={t('settings.voice.speech.speed')}
-            min={0.5}
-            max={2}
+            min={MIN_SPEECH_SPEED}
+            max={MAX_SPEECH_SPEED}
             step={0.1}
             value={speechSpeed}
             onBlur={(value) => savePreference(() => setSpeechSpeed(value ?? 1))}

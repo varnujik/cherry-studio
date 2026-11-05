@@ -357,7 +357,7 @@ JsonObject synthesize(const JsonObject& request) {
     if (!request.HasKey(L"speed") || request.Lookup(L"speed").ValueType() != JsonValueType::Number)
         throw HelperError("invalid_request");
     const auto speed = request.GetNamedNumber(L"speed");
-    if (!std::isfinite(speed) || speed < 0.5 || speed > 2.0) throw HelperError("invalid_request");
+    if (!std::isfinite(speed) || speed < 0.1 || speed > 5.0) throw HelperError("invalid_request");
 
     ComPtr<ISpObjectToken> selected;
     for (const auto& token : tokens(SPCAT_VOICES)) {
@@ -383,7 +383,7 @@ JsonObject synthesize(const JsonObject& request) {
         require(CoCreateInstance(CLSID_SpVoice, nullptr, CLSCTX_ALL,
                                  IID_PPV_ARGS(voice.GetAddressOf())), "synthesis_failed");
         require(voice->SetVoice(selected.Get()), "synthesis_failed");
-        require(voice->SetRate(static_cast<long>(std::lround((speed - 1.0) * 10))), "synthesis_failed");
+        require(voice->SetRate(std::clamp<long>(std::lround((speed - 1.0) * 10), -10, 10)), "synthesis_failed");
         require(voice->SetOutput(output.Get(), FALSE), "synthesis_failed");
         require(voice->Speak(text.c_str(), SPF_IS_NOT_XML, nullptr), "synthesis_failed");
         voice.Reset();

@@ -22,7 +22,7 @@ enum AppleTts {
     }
 
     static func rate(forMultiplier multiplier: Double) throws -> Float {
-        guard multiplier.isFinite, (0.5 ... 2.0).contains(multiplier) else {
+        guard multiplier.isFinite, (0.1 ... 5.0).contains(multiplier) else {
             throw HelperError(code: .invalidRequest)
         }
         return min(
