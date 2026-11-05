@@ -1,0 +1,45 @@
+# Test-only workflow for the varnujik fork. Not part of any upstream pull request.
+name: Test portable (TTS speed)
+on:
+  push:
+    branches: [test/portable-tts-speed]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".node-version"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: |
+          pnpm test:main \
+            src/main/ipc/handlers/__tests__/voice.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/windows.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/apple.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/kokoroTts.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/qwen3Tts.test.ts
+          pnpm test:shared src/shared/ipc/schemas/__tests__/voice.test.ts
+          pnpm test:renderer src/renderer/pages/settings/VoiceSettings/__tests__/VoiceSettings.test.tsx
+  build-windows-portable:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".node-version"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install
+      - run: pnpm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
+      - run: pnpm exec electron-builder --win portable --x64
+      - uses: actions/upload-artifact@v7
+        with:
+          name: cherry-studio-windows-x64-portable-tts-speed
+          path: dist/*-portable.exe
+          retention-days: 7
