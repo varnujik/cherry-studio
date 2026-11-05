@@ -8,7 +8,6 @@ import {
   KOKORO_V1_TTS_MODEL_ID,
   PIPER_FABER_TTS_MODEL_ID,
   PIPER_CADU_TTS_MODEL_ID,
-  PIPER_JEFF_TTS_MODEL_ID,
   FUNASR_MODEL_ID,
   QWEN3_ASR_MODEL_ID,
   LOCAL_VOICE_MODEL_IDS,
@@ -77,8 +76,7 @@ const speechInput = sessionAdmission
         KOKORO_TTS_MODEL_ID,
         KOKORO_V1_TTS_MODEL_ID,
         PIPER_FABER_TTS_MODEL_ID,
-        PIPER_CADU_TTS_MODEL_ID,
-        PIPER_JEFF_TTS_MODEL_ID
+        PIPER_CADU_TTS_MODEL_ID
       ])
       .optional(),
     text: z.string().trim().min(1).max(10_000),
@@ -190,8 +188,7 @@ const speechModelId = z.enum([
   KOKORO_TTS_MODEL_ID,
   KOKORO_V1_TTS_MODEL_ID,
   PIPER_FABER_TTS_MODEL_ID,
-  PIPER_CADU_TTS_MODEL_ID,
-  PIPER_JEFF_TTS_MODEL_ID
+  PIPER_CADU_TTS_MODEL_ID
 ])
 
 export const voiceRequestSchemas = {

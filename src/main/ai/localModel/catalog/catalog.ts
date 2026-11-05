@@ -202,7 +202,7 @@ export const SHARED_ARTIFACTS = {
 function piperPtBrBundle(
   id: LocalModelBundleId,
   voice: keyof typeof piperPtBrRelease.voices,
-  installDirKey: 'feature.tts.piper_faber' | 'feature.tts.piper_cadu' | 'feature.tts.piper_jeff'
+  installDirKey: 'feature.tts.piper_faber' | 'feature.tts.piper_cadu'
 ): ModelBundle {
   const release = piperPtBrRelease.voices[voice]
   return {
@@ -329,7 +329,6 @@ export const LOCAL_MODEL_BUNDLES = {
   },
   'piper-pt-br-faber-medium': piperPtBrBundle('piper-pt-br-faber-medium', 'faber', 'feature.tts.piper_faber'),
   'piper-pt-br-cadu-medium': piperPtBrBundle('piper-pt-br-cadu-medium', 'cadu', 'feature.tts.piper_cadu'),
-  'piper-pt-br-jeff-medium': piperPtBrBundle('piper-pt-br-jeff-medium', 'jeff', 'feature.tts.piper_jeff'),
   'qwen3-asr-1.7b-8bit': {
     id: 'qwen3-asr-1.7b-8bit',
     capability: 'asr',

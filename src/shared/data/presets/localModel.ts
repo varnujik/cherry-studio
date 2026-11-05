@@ -54,8 +54,7 @@ export const LOCAL_MODEL_BUNDLE_IDS = [
   'kokoro-multi-lang-v1.1',
   'kokoro-int8-multi-lang-v1.0',
   'piper-pt-br-faber-medium',
-  'piper-pt-br-cadu-medium',
-  'piper-pt-br-jeff-medium'
+  'piper-pt-br-cadu-medium'
 ] as const
 export type LocalModelBundleId = (typeof LOCAL_MODEL_BUNDLE_IDS)[number]
 

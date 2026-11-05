@@ -121,8 +121,15 @@ describe('Kokoro Chinese-English speech', () => {
 describe('Kokoro v1.0 Brazilian Portuguese speech', () => {
   it('lists the five pt-BR voices, native ones first, and defaults to pf_dora', async () => {
     const voices = await kokoroV1SpeechDefinition.voices()
-    expect(voices.map((voice) => voice.id)).toEqual(['pf_dora', 'pm_alex', 'pm_santa', 'ef_dora', 'if_sara'])
-    expect(voices.slice(3).map((voice) => voice.name)).toEqual(['ef_dora (es)', 'if_sara (it)'])
+    expect(voices.map((voice) => voice.id)).toEqual([
+      'pf_dora',
+      'pm_alex',
+      'pm_santa',
+      'ef_dora',
+      'if_sara',
+      'im_nicola'
+    ])
+    expect(voices.slice(3).map((voice) => voice.name)).toEqual(['ef_dora (es)', 'if_sara (it)', 'im_nicola (it)'])
     expect(voices.every((voice) => voice.locale === 'pt-BR' && voice.languages?.join() === 'pt-BR')).toBe(true)
     expect((await kokoroV1SpeechDefinition.getDefaultVoice('pt-BR'))?.id).toBe('pf_dora')
     expect(await kokoroV1SpeechDefinition.getDefaultVoice('zh-CN')).toBeNull()
@@ -131,7 +138,8 @@ describe('Kokoro v1.0 Brazilian Portuguese speech', () => {
   it.each([
     ['pm_alex', '43'],
     ['ef_dora', '28'],
-    ['if_sara', '35']
+    ['if_sara', '35'],
+    ['im_nicola', '36']
   ])('synthesizes %s through the v1.0 bundle with the published speaker ID %s', async (voice, sid) => {
     synthesize.mockImplementation(async (modelId, input) => {
       expect(modelId).toBe(KOKORO_V1_TTS_BUNDLE_ID)

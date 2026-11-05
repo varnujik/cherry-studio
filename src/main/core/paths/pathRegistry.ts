@@ -160,7 +160,6 @@ export function buildPathRegistry() {
     'feature.tts.kokoro_v1': path.join(appUserDataRuntime, 'models', 'kokoro-int8-multi-lang-v1.0'),
     'feature.tts.piper_faber': path.join(appUserDataRuntime, 'models', 'piper-pt-br-faber-medium'),
     'feature.tts.piper_cadu': path.join(appUserDataRuntime, 'models', 'piper-pt-br-cadu-medium'),
-    'feature.tts.piper_jeff': path.join(appUserDataRuntime, 'models', 'piper-pt-br-jeff-medium'),
 
     // BabelDOC runtime cache (layout model, fonts, CMap/tiktoken assets)
     'feature.pdf_translation.babeldoc': path.join(appUserDataRuntime, 'models', 'babeldoc'),

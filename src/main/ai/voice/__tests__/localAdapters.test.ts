@@ -8,7 +8,6 @@ import {
   KOKORO_V1_TTS_MODEL_ID,
   PIPER_CADU_TTS_MODEL_ID,
   PIPER_FABER_TTS_MODEL_ID,
-  PIPER_JEFF_TTS_MODEL_ID,
   WINDOWS_ASR_MODEL_ID,
   WINDOWS_TTS_MODEL_ID,
   TranscriptionLanguageSource,
@@ -20,7 +19,7 @@ import { voiceRequestSchemas } from '@shared/ipc/schemas/voice'
 
 import { describeVoiceModel, listVoiceModels, resolveTranscriptionRequest } from '../localAdapters'
 
-const PIPER_MODEL_IDS = [PIPER_FABER_TTS_MODEL_ID, PIPER_CADU_TTS_MODEL_ID, PIPER_JEFF_TTS_MODEL_ID]
+const PIPER_MODEL_IDS = [PIPER_FABER_TTS_MODEL_ID, PIPER_CADU_TTS_MODEL_ID]
 const SHERPA_TTS_MODEL_IDS = [KOKORO_TTS_MODEL_ID, KOKORO_V1_TTS_MODEL_ID, ...PIPER_MODEL_IDS]
 
 describe('device-scoped voice catalog and request policy', () => {
