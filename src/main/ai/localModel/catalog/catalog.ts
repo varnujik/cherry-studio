@@ -216,6 +216,31 @@ function piperPtBrBundle(
       // Voice data licence; the weights are fine-tuned from Piper's English voices.
       license: { spdx: 'CC0-1.0', url: 'https://github.com/OHF-Voice/voice-datasets' },
       upstream: { url: 'https://huggingface.co/rhasspy/piper-voices', revision: piperPtBrRelease.upstreamRevision },
+      conversion: {
+        url: `https://huggingface.co/${release.repo}`,
+        revision: release.revision,
+        license: { spdx: 'Apache-2.0', url: 'https://github.com/k2-fsa/sherpa-onnx/blob/master/LICENSE' }
+      }
+    },
+    files: release.files.map((file) => {
+      // The runtime loads a fixed `model.onnx`; upstream names the weights after the voice.
+      const relPath = file.relPath.endsWith('.onnx') ? 'model.onnx' : file.relPath
+      return {
+        key: relPath,
+        relPath,
+        sha256: file.sha256,
+        sizeBytes: file.sizeBytes,
+        minBytes: file.sizeBytes,
+        weight: Math.max(0.01, file.sizeBytes / 1_000_000),
+        sources: [
+          { source: 'huggingface', repo: release.repo, revision: release.revision, remoteFile: file.relPath },
+          { source: 'hf-mirror', repo: release.repo, revision: release.revision, remoteFile: file.relPath }
+        ]
+      }
+    })
+  }
+}
+
 /** Silero VAD shared by the sherpa-onnx ASR bundles; speech is decoded segment by segment. */
 const SILERO_VAD_FILE = {
   key: 'voiceActivityDetector',
@@ -263,22 +288,6 @@ function sherpaAsrBundle(
         license: { spdx: 'Apache-2.0', url: 'https://github.com/k2-fsa/sherpa-onnx/blob/master/LICENSE' }
       }
     },
-    files: release.files.map((file) => {
-      // The runtime loads a fixed `model.onnx`; upstream names the weights after the voice.
-      const relPath = file.relPath.endsWith('.onnx') ? 'model.onnx' : file.relPath
-      return {
-        key: relPath,
-        relPath,
-        sha256: file.sha256,
-        sizeBytes: file.sizeBytes,
-        minBytes: file.sizeBytes,
-        weight: Math.max(0.01, file.sizeBytes / 1_000_000),
-        sources: [
-          { source: 'huggingface', repo: release.repo, revision: release.revision, remoteFile: file.relPath },
-          { source: 'hf-mirror', repo: release.repo, revision: release.revision, remoteFile: file.relPath }
-        ]
-      }
-    })
     files: [
       ...release.files.map(
         (file): BundleFile => ({
