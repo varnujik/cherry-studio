@@ -21,7 +21,9 @@ jobs:
           sha256sum m/*.onnx m/tokenizer/* m/LICENSE | sed 's/^/SHA /'; stat -c 'SIZE %s %n' m/tokenizer/* m/LICENSE
       - name: Transcribe
         run: |
-          npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
-          TAG=mlt-padrao node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
-          TAG=mlt-葡萄牙语 FLANG=葡萄牙语 node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
-          TAG=mlt-Portuguese FLANG=Portuguese node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
+          mkdir -p /tmp/rt && cd /tmp/rt && npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
+          cp $GITHUB_WORKSPACE/.github/asr-test/asr.js /tmp/rt/asr.js
+          M=$GITHUB_WORKSPACE/m; W=$GITHUB_WORKSPACE/.github/asr-test
+          TAG=mlt-padrao node asr.js $M $W 2>/dev/null
+          TAG=mlt-葡萄牙语 FLANG=葡萄牙语 node asr.js $M $W 2>/dev/null
+          TAG=mlt-Portuguese FLANG=Portuguese node asr.js $M $W 2>/dev/null
