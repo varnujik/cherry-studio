@@ -45,7 +45,9 @@ export const DEFAULT_APPLE_ASR_LOCALE = 'en-US'
 export const DEFAULT_WINDOWS_ASR_LOCALE = 'en-US'
 
 export const MIN_SPEECH_SPEED = 0.5
-export const MAX_SPEECH_SPEED = 2
+export const MAX_SPEECH_SPEED = 5
+/** OS voices (SAPI, AVSpeechSynthesizer) top out near 2x; faster requests play at this cap. */
+export const SYSTEM_SPEECH_MAX_SPEED = 2
 export const DEFAULT_SPEECH_SPEED = 1
 
 export const VOICE_SESSION_SOURCES = ['settings', 'dictation', 'playback', 'automation'] as const

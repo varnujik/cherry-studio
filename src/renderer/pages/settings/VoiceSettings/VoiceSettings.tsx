@@ -48,6 +48,8 @@ import {
   QWEN3_TTS_MODEL_ID,
   KOKORO_TTS_MODEL_ID,
   DOWNLOADABLE_SPEECH_BUNDLES,
+  MAX_SPEECH_SPEED,
+  MIN_SPEECH_SPEED,
   WINDOWS_ASR_MODEL_ID,
   WINDOWS_TTS_MODEL_ID,
   type LocalSpeechModelId,
@@ -1198,8 +1200,8 @@ function VoiceSettings() {
           <InputNumber
             className="w-24"
             aria-label={t('settings.voice.speech.speed')}
-            min={0.5}
-            max={2}
+            min={MIN_SPEECH_SPEED}
+            max={MAX_SPEECH_SPEED}
             step={0.1}
             value={speechSpeed}
             onBlur={(value) => savePreference(() => setSpeechSpeed(value ?? 1))}
