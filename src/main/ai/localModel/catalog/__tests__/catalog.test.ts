@@ -144,6 +144,16 @@ describe('local model catalog', () => {
     }
   })
 
+  it.each(['kokoro-int8-multi-lang-v1.0', 'piper-pt-br-faber-medium', 'piper-pt-br-cadu-medium'] as const)(
+    'pins every %s file to an immutable revision',
+    (id) => {
+      const bundle: ModelBundle = LOCAL_MODEL_BUNDLES[id]
+      for (const file of bundle.files)
+        for (const source of file.sources ?? []) expect(source.revision, file.relPath).toMatch(/^[0-9a-f]{40}$/)
+      expect(bundle.provenance?.upstream.revision).toMatch(/^[0-9a-f]{40}$/)
+    }
+  )
+
   it.each(['faber', 'cadu'])('installs the Piper %s voice as model.onnx and requires the Sherpa runtime', (voice) => {
     const bundle: ModelBundle = LOCAL_MODEL_BUNDLES[`piper-pt-br-${voice}-medium` as keyof typeof LOCAL_MODEL_BUNDLES]
     const model = bundle.files.find((file) => file.relPath === 'model.onnx')

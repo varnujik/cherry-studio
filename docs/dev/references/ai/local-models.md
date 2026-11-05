@@ -333,7 +333,8 @@ request targets the other bundle's directory.
 
 Two Piper voices (`piper-pt-br-faber-medium` and `piper-pt-br-cadu-medium`) are separate bundles of about 62 MB each, so a user downloads one
 voice and adds others later. Each is a single-speaker VITS model from the sherpa-onnx
-conversion of `rhasspy/piper-voices`, installed as `model.onnx` with `tokens.txt` and the same
+conversion of `rhasspy/piper-voices` pinned to its Hugging Face revision (the faber repo there holds
+an older export than the sherpa-onnx GitHub release, so its digest differs), installed as `model.onnx` with `tokens.txt` and the same
 Portuguese eSpeak subset as the Kokoro v1.0 bundle. The worker loads them with the `piper`
 architecture through the same resident sherpa-onnx model slot as Kokoro. The voice datasets are
 CC0, but the weights are fine-tuned from Piper's English voices, whose dataset terms should be
