@@ -1,4 +1,4 @@
-# Test-only (varnujik fork): read pinned revisions and LFS digests from HuggingFace.
+# Test-only (varnujik fork): verify the HuggingFace Piper faber export runs on sherpa-onnx 1.13.6.
 name: HF metadata
 on:
   push:
@@ -6,25 +6,29 @@ on:
 permissions:
   contents: read
 jobs:
-  metadata:
+  faber:
     runs-on: ubuntu-latest
     steps:
-      - name: Repo revisions
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Download faber from HuggingFace
         run: |
-          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 hexgrad/Kokoro-82M csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium rhasspy/piper-voices; do
-            echo "REV $r $(curl -fsS https://huggingface.co/api/models/$r | jq -r .sha)"
-          done
-      - name: File digests
+          base=https://huggingface.co/csukuangfj/vits-piper-pt_BR-faber-medium/resolve/4f385076a8f9d5bc7b4cd9fea4dc77e6e8ca8167
+          mkdir -p m/espeak-ng-data/lang/roa
+          curl -fsSL -o m/model.onnx $base/pt_BR-faber-medium.onnx
+          curl -fsSL -o m/tokens.txt $base/tokens.txt
+          for f in intonations phondata phondata-manifest phonindex phontab pt_dict lang/roa/pt lang/roa/pt-BR; do curl -fsSL -o m/espeak-ng-data/$f $base/espeak-ng-data/$f; done
+          sha256sum m/model.onnx m/espeak-ng-data/phondata | sed 's/^/SHA /'
+          stat -c 'SIZE %s %n' m/model.onnx
+      - name: Synthesize with sherpa-onnx-node 1.13.6
         run: |
-          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium; do
-            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" \
-              | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size) \(.lfs.oid // "git:" + .oid)"' \
-              | grep -E " (model\.int8\.onnx|voices\.bin|tokens\.txt|LICENSE|[^ ]+\.onnx|espeak-ng-data/(intonations|phondata|phondata-manifest|phonindex|phontab|pt_dict|lang/roa/pt|lang/roa/pt-BR)) "
-          done
-      - name: Small-file sha256 (non-LFS)
-        run: |
-          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium; do
-            for f in tokens.txt LICENSE espeak-ng-data/intonations espeak-ng-data/phondata-manifest espeak-ng-data/phonindex espeak-ng-data/phontab espeak-ng-data/pt_dict espeak-ng-data/lang/roa/pt espeak-ng-data/lang/roa/pt-BR; do
-              s=$(curl -fsSL "https://huggingface.co/$r/resolve/main/$f" | sha256sum | cut -c1-64) && echo "SHA $r $f $s" || echo "MISSING $r $f"
-            done
-          done
+          npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
+          cat > t.js <<'JS'
+          const s=require('sherpa-onnx-node');const j=require('path').join;
+          (async()=>{const tts=await s.OfflineTts.createAsync({model:{vits:{model:'m/model.onnx',tokens:'m/tokens.txt',dataDir:'m/espeak-ng-data'},numThreads:2,provider:'cpu'},maxNumSentences:1});
+          const a=tts.generate({text:'Olá! Esta é uma amostra da voz em português do Brasil.',sid:0,speed:1,enableExternalBuffer:false});
+          console.log('RESULT samples',a.samples.length,'seconds',(a.samples.length/a.sampleRate).toFixed(2));
+          let e=0;for(const x of a.samples)e+=x*x;console.log('RESULT rms',Math.sqrt(e/a.samples.length).toFixed(4));})().catch(e=>{console.log('RESULT ERROR',e.message);process.exit(1)});
+          JS
+          node t.js
