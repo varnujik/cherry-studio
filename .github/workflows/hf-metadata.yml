@@ -19,11 +19,20 @@ jobs:
           mkdir -p m/tokenizer
           for f in encoder_adaptor.int8.onnx llm.int8.onnx embedding.int8.onnx tokenizer/config.json tokenizer/generation_config.json tokenizer/merges.txt tokenizer/tokenizer.json tokenizer/tokenizer_config.json tokenizer/vocab.json LICENSE; do curl -fsSL -o m/$f $base/$f; done
           sha256sum m/*.onnx m/tokenizer/* m/LICENSE | sed 's/^/SHA /'; stat -c 'SIZE %s %n' m/tokenizer/* m/LICENSE
+      - name: Source README
+        run: curl -fsSL https://huggingface.co/luigi000/fun-asr-mlt-nano-onnx-int8/raw/932d7dbb98623bd31314015b3bc0dac0dcf80acc/README.md | sed 's/^/README /'
+      - name: Official English sample
+        run: |
+          sudo apt-get install -y ffmpeg >/dev/null 2>&1
+          curl -fsSL -o en.mp3 https://huggingface.co/FunAudioLLM/Fun-ASR-MLT-Nano-2512/resolve/main/example/en.mp3
+          mkdir -p en && ffmpeg -loglevel error -i en.mp3 -ar 16000 -ac 1 en/en.wav
       - name: Transcribe
         run: |
           mkdir -p /tmp/rt && cd /tmp/rt && npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
           cp $GITHUB_WORKSPACE/.github/asr-test/asr.js /tmp/rt/asr.js
           M=$GITHUB_WORKSPACE/m; W=$GITHUB_WORKSPACE/.github/asr-test
+          TAG=mlt-en node asr.js $M $GITHUB_WORKSPACE/en 2>/dev/null
+          DEBUG=1 TAG=mlt-debug node asr.js $M $W 2>&1 | grep -v '^RES' | head -60 | sed 's/^/DBG /'
           TAG=mlt-padrao node asr.js $M $W 2>/dev/null
           TAG=mlt-葡萄牙语 FLANG=葡萄牙语 node asr.js $M $W 2>/dev/null
           TAG=mlt-Portuguese FLANG=Portuguese node asr.js $M $W 2>/dev/null
