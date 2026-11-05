@@ -353,6 +353,16 @@ describe('Windows system TTS adapter', () => {
     expect(await readdir(directory)).toEqual([])
   })
 
+  it('caps speeds above the SAPI limit at 2x instead of rejecting them', async () => {
+    await createWindowsSpeechModel({ voice: voices[0].id, language: 'zh-CN', speed: 4 }).doGenerate({
+      text: 'private text',
+      outputFormat: 'wav'
+    })
+    expect(mocks.nativeRequest.mock.calls.find(([request]) => request.operation === 'synthesize')?.[0]).toMatchObject({
+      speed: 2
+    })
+  })
+
   it.each([{ voice: 'missing' }, { voice: voices[0].id, language: 'en-US' }])(
     'does not substitute another voice for %j',
     async (options) => {

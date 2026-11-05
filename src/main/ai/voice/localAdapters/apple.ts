@@ -14,7 +14,8 @@ import {
   DEFAULT_APPLE_ASR_LOCALE,
   DEFAULT_SPEECH_SPEED,
   MAX_SPEECH_SPEED,
-  MIN_SPEECH_SPEED
+  MIN_SPEECH_SPEED,
+  SYSTEM_SPEECH_MAX_SPEED
 } from '@shared/ai/localVoice'
 import { SpeechInputKind, SpeechOutputKind } from '@shared/ai/voice'
 
@@ -160,7 +161,13 @@ export function createAppleSpeechModel(options: SpeechOptions): SpeechModelV3 {
         async (directory) => {
           const outputPath = join(directory, 'output.wav')
           await nativeClient().request(
-            { operation: 'synthesize', voiceId: options.voice, text: input.text, outputPath, speed },
+            {
+              operation: 'synthesize',
+              voiceId: options.voice,
+              text: input.text,
+              outputPath,
+              speed: Math.min(speed, SYSTEM_SPEECH_MAX_SPEED)
+            },
             { signal: input.abortSignal }
           )
           checkAbort(input.abortSignal)
@@ -253,7 +260,12 @@ const streamingSpeech: SpeechOperation = {
         throw new VoiceRuntimeError('invalid_request')
       await requireReady(APPLE_TTS_MODEL_ID, options, lifetime)
       return nativeClient().stream(
-        { operation: 'synthesize_stream', voiceId: options.voice, text: input.text, speed },
+        {
+          operation: 'synthesize_stream',
+          voiceId: options.voice,
+          text: input.text,
+          speed: Math.min(speed, SYSTEM_SPEECH_MAX_SPEED)
+        },
         { signal: lifetime }
       )
     })

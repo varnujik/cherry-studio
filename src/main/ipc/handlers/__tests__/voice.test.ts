@@ -245,7 +245,7 @@ describe('Voice handlers through real IpcRouter', () => {
   })
 
   it.each([
-    ['an out-of-range speed', { speed: 2.01 }],
+    ['an out-of-range speed', { speed: 5.01 }],
     ['a non-finite speed', { speed: Number.POSITIVE_INFINITY }],
     ['a transcription model', { modelId: 'local-voice::apple-system-asr' }]
   ])('rejects speech input containing %s before invoking the handler', async (_label, invalid) => {
@@ -266,7 +266,7 @@ describe('Voice handlers through real IpcRouter', () => {
     expect(boundary.speech).not.toHaveBeenCalled()
   })
 
-  it.each([0.49, 2.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, '1'])(
+  it.each([0.49, 5.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, '1'])(
     'returns the stable validation failure for unsupported speech speed %s',
     async (speed) => {
       await expectValidationFailure(router.dispatch('ai.speech.generate', { ...input, speed }, { senderId: 'owner' }))

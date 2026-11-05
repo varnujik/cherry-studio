@@ -10,6 +10,7 @@ import {
   DEFAULT_WINDOWS_ASR_LOCALE,
   MAX_SPEECH_SPEED,
   MIN_SPEECH_SPEED,
+  SYSTEM_SPEECH_MAX_SPEED,
   WINDOWS_ASR_MODEL_ID,
   WINDOWS_TTS_MODEL_ID
 } from '@shared/ai/localVoice'
@@ -160,7 +161,13 @@ export function createWindowsSpeechModel(options: SpeechOptions): SpeechModelV3 
         async (directory) => {
           const outputPath = join(directory, 'output.wav')
           await nativeClient().request(
-            { operation: 'synthesize', voiceId: options.voice, text: input.text, outputPath, speed },
+            {
+              operation: 'synthesize',
+              voiceId: options.voice,
+              text: input.text,
+              outputPath,
+              speed: Math.min(speed, SYSTEM_SPEECH_MAX_SPEED)
+            },
             { signal: input.abortSignal }
           )
           checkAbort(input.abortSignal)
