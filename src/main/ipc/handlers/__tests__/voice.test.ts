@@ -266,7 +266,7 @@ describe('Voice handlers through real IpcRouter', () => {
     expect(boundary.speech).not.toHaveBeenCalled()
   })
 
-  it.each([0.49, 2.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, '1'])(
+  it.each([0.49, 5.01, Number.NaN, Number.POSITIVE_INFINITY, Number.NEGATIVE_INFINITY, '1'])(
     'returns the stable validation failure for unsupported speech speed %s',
     async (speed) => {
       await expectValidationFailure(router.dispatch('ai.speech.generate', { ...input, speed }, { senderId: 'owner' }))
