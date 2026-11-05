@@ -1,0 +1,30 @@
+# Test-only (varnujik fork): read pinned revisions and LFS digests from HuggingFace.
+name: HF metadata
+on:
+  push:
+    branches: [test/hf-metadata]
+permissions:
+  contents: read
+jobs:
+  metadata:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repo revisions
+        run: |
+          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 hexgrad/Kokoro-82M csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium rhasspy/piper-voices; do
+            echo "REV $r $(curl -fsS https://huggingface.co/api/models/$r | jq -r .sha)"
+          done
+      - name: File digests
+        run: |
+          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium; do
+            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" \
+              | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size) \(.lfs.oid // "git:" + .oid)"' \
+              | grep -E " (model\.int8\.onnx|voices\.bin|tokens\.txt|LICENSE|[^ ]+\.onnx|espeak-ng-data/(intonations|phondata|phondata-manifest|phonindex|phontab|pt_dict|lang/roa/pt|lang/roa/pt-BR)) "
+          done
+      - name: Small-file sha256 (non-LFS)
+        run: |
+          for r in csukuangfj/kokoro-int8-multi-lang-v1_0 csukuangfj/vits-piper-pt_BR-faber-medium csukuangfj/vits-piper-pt_BR-cadu-medium; do
+            for f in tokens.txt LICENSE espeak-ng-data/intonations espeak-ng-data/phondata-manifest espeak-ng-data/phonindex espeak-ng-data/phontab espeak-ng-data/pt_dict espeak-ng-data/lang/roa/pt espeak-ng-data/lang/roa/pt-BR; do
+              s=$(curl -fsSL "https://huggingface.co/$r/resolve/main/$f" | sha256sum | cut -c1-64) && echo "SHA $r $f $s" || echo "MISSING $r $f"
+            done
+          done
