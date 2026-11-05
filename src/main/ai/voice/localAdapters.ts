@@ -14,11 +14,7 @@ import type { InputFor, OutputFor } from '@shared/ipc/types'
 import { appleSpeechDefinition, appleTranscriptionDefinition } from './localAdapters/apple'
 import { funAsrTranscriptionDefinition } from './localAdapters/funasr'
 import { kokoroSpeechDefinition, kokoroV1SpeechDefinition } from './localAdapters/kokoroTts'
-import {
-  piperCaduSpeechDefinition,
-  piperFaberSpeechDefinition,
-  piperJeffSpeechDefinition
-} from './localAdapters/piperTts'
+import { piperCaduSpeechDefinition, piperFaberSpeechDefinition } from './localAdapters/piperTts'
 import { qwen3AsrTranscriptionDefinition } from './localAdapters/qwen3Asr'
 import { qwen3SpeechDefinition } from './localAdapters/qwen3Tts'
 import { windowsSpeechDefinition, windowsTranscriptionDefinition } from './localAdapters/windows'
@@ -47,8 +43,7 @@ const speechDefinitions: readonly SpeechModelDefinition[] = [
   kokoroSpeechDefinition,
   kokoroV1SpeechDefinition,
   piperFaberSpeechDefinition,
-  piperCaduSpeechDefinition,
-  piperJeffSpeechDefinition
+  piperCaduSpeechDefinition
 ]
 const definitions = [...transcriptionDefinitions, ...speechDefinitions]
 

@@ -111,6 +111,7 @@
           "sizeBytes": 968
         }
       ]
+<<<<<<< HEAD
     },
     "jeff": {
       "repo": "csukuangfj/vits-piper-pt_BR-jeff-medium",
@@ -167,6 +168,8 @@
           "sizeBytes": 968
         }
       ]
+=======
+>>>>>>> feat/tts-kokoro-v1-pt-br
     }
   }
 }

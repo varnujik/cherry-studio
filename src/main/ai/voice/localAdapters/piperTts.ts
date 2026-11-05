@@ -3,9 +3,7 @@ import {
   PIPER_CADU_TTS_BUNDLE_ID,
   PIPER_CADU_TTS_MODEL_ID,
   PIPER_FABER_TTS_BUNDLE_ID,
-  PIPER_FABER_TTS_MODEL_ID,
-  PIPER_JEFF_TTS_BUNDLE_ID,
-  PIPER_JEFF_TTS_MODEL_ID
+  PIPER_FABER_TTS_MODEL_ID
 } from '@shared/ai/localVoice'
 
 import { createSherpaSpeechDefinition, createVariantSpeechModel, type SherpaSpeechVariant } from './kokoroTts'
@@ -36,7 +34,4 @@ export const piperFaberSpeechDefinition = piperDefinition(
 )
 export const piperCaduSpeechDefinition = piperDefinition(
   piperVariant('cadu', PIPER_CADU_TTS_MODEL_ID, PIPER_CADU_TTS_BUNDLE_ID)
-)
-export const piperJeffSpeechDefinition = piperDefinition(
-  piperVariant('jeff', PIPER_JEFF_TTS_MODEL_ID, PIPER_JEFF_TTS_BUNDLE_ID)
 )

@@ -6056,7 +6056,6 @@
   "settings.voice.model.kokoro_v1_tts": "Kokoro v1.0（巴西葡萄牙语）",
   "settings.voice.model.piper_cadu_tts": "Piper cadu（巴西葡萄牙语）",
   "settings.voice.model.piper_faber_tts": "Piper faber（巴西葡萄牙语）",
-  "settings.voice.model.piper_jeff_tts": "Piper jeff（巴西葡萄牙语）",
   "settings.voice.model.qwen3_asr": "Qwen3-ASR 1.7B (8-bit)",
   "settings.voice.model.qwen3_tts": "Qwen3-TTS CustomVoice（8-bit）",
   "settings.voice.model.windows_asr": "Windows 系统语音识别",

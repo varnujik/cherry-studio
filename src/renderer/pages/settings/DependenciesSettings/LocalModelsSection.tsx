@@ -50,11 +50,6 @@ const MODEL_CARDS = {
     nameKey: 'settings.voice.model.piper_cadu_tts',
     sources: ['csukuangfj/vits-piper-pt_BR-cadu-medium']
   },
-  'piper-pt-br-jeff-medium': {
-    icon: <Volume2 className="size-5" />,
-    nameKey: 'settings.voice.model.piper_jeff_tts',
-    sources: ['csukuangfj/vits-piper-pt_BR-jeff-medium']
-  },
   'qwen3-tts-0.6b-customvoice-8bit': {
     icon: <Volume2 className="size-5" />,
     nameKey: 'settings.voice.model.qwen3_tts',

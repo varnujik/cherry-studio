@@ -331,8 +331,7 @@ request targets the other bundle's directory.
 
 ### Piper Brazilian Portuguese speech
 
-Three Piper voices (`piper-pt-br-faber-medium`, `piper-pt-br-cadu-medium`,
-`piper-pt-br-jeff-medium`) are separate bundles of about 62 MB each, so a user downloads one
+Two Piper voices (`piper-pt-br-faber-medium` and `piper-pt-br-cadu-medium`) are separate bundles of about 62 MB each, so a user downloads one
 voice and adds others later. Each is a single-speaker VITS model from the sherpa-onnx
 conversion of `rhasspy/piper-voices`, installed as `model.onnx` with `tokens.txt` and the same
 Portuguese eSpeak subset as the Kokoro v1.0 bundle. The worker loads them with the `piper`
@@ -340,8 +339,8 @@ architecture through the same resident sherpa-onnx model slot as Kokoro. The voi
 CC0, but the weights are fine-tuned from Piper's English voices, whose dataset terms should be
 checked before distribution.
 
-The Kokoro v1.0 bundle also exposes `ef_dora` (28) and `if_sara` (35), Spanish and Italian
-voices that read Portuguese phonemes with an accent, as extra pt-BR voices.
+The Kokoro v1.0 bundle also exposes `ef_dora` (28), `if_sara` (35) and `im_nicola` (36), Spanish
+and Italian voices that read Portuguese phonemes with an accent, as extra pt-BR voices.
 
 ## Management plane
 

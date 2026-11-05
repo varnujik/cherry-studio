@@ -95,8 +95,7 @@ describe('lifecycle', () => {
         'kokoro-multi-lang-v1.1',
         'kokoro-int8-multi-lang-v1.0',
         'piper-pt-br-faber-medium',
-        'piper-pt-br-cadu-medium',
-        'piper-pt-br-jeff-medium'
+        'piper-pt-br-cadu-medium'
       ].sort()
     )
   })

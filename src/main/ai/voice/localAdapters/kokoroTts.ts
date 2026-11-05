@@ -70,14 +70,15 @@ const KOKORO_V1_1: SherpaSpeechVariant = {
 }
 
 // Speaker ids come from the v1.0 model metadata (`speaker2id`). The native Brazilian voices
-// come first; ef_dora and if_sara are Spanish/Italian voices reading pt-BR phonemes (accented).
+// come first; the Spanish and Italian voices read pt-BR phonemes with an accent.
 const V1_LANGUAGES = ['pt-BR'] as const
 const V1_VOICES = [
   ['pf_dora', 'pf_dora', 42],
   ['pm_alex', 'pm_alex', 43],
   ['pm_santa', 'pm_santa', 44],
   ['ef_dora', 'ef_dora (es)', 28],
-  ['if_sara', 'if_sara (it)', 35]
+  ['if_sara', 'if_sara (it)', 35],
+  ['im_nicola', 'im_nicola (it)', 36]
 ] as const
 const KOKORO_V1: SherpaSpeechVariant = {
   modelId: KOKORO_V1_TTS_MODEL_ID,

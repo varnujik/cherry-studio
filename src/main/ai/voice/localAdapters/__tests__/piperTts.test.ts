@@ -5,9 +5,9 @@ import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { application } from '@application'
-import { PIPER_CADU_TTS_BUNDLE_ID, PIPER_FABER_TTS_BUNDLE_ID, PIPER_JEFF_TTS_BUNDLE_ID } from '@shared/ai/localVoice'
+import { PIPER_CADU_TTS_BUNDLE_ID, PIPER_FABER_TTS_BUNDLE_ID } from '@shared/ai/localVoice'
 
-import { piperCaduSpeechDefinition, piperFaberSpeechDefinition, piperJeffSpeechDefinition } from '../piperTts'
+import { piperCaduSpeechDefinition, piperFaberSpeechDefinition } from '../piperTts'
 import type { completeSpeechOperation } from '../sdkOperations'
 
 const synthesize = vi.fn()
@@ -42,8 +42,7 @@ function speak(definition: typeof piperFaberSpeechDefinition, options: { voice: 
 
 describe.each([
   ['faber', piperFaberSpeechDefinition, PIPER_FABER_TTS_BUNDLE_ID],
-  ['cadu', piperCaduSpeechDefinition, PIPER_CADU_TTS_BUNDLE_ID],
-  ['jeff', piperJeffSpeechDefinition, PIPER_JEFF_TTS_BUNDLE_ID]
+  ['cadu', piperCaduSpeechDefinition, PIPER_CADU_TTS_BUNDLE_ID]
 ])('Piper pt-BR %s speech', (voice, definition, bundleId) => {
   it('lists its single pt-BR voice and defaults to it only for pt-BR', async () => {
     const voices = await definition.voices()
