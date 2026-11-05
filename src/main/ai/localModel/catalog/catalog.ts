@@ -214,7 +214,7 @@ function piperPtBrBundle(
     provenance: {
       // Voice data licence; the weights are fine-tuned from Piper's English voices.
       license: { spdx: 'CC0-1.0', url: 'https://github.com/OHF-Voice/voice-datasets' },
-      upstream: { url: 'https://huggingface.co/rhasspy/piper-voices', revision: release.revision },
+      upstream: { url: 'https://huggingface.co/rhasspy/piper-voices', revision: piperPtBrRelease.upstreamRevision },
       conversion: {
         url: `https://huggingface.co/${release.repo}`,
         revision: release.revision,
