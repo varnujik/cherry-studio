@@ -1,4 +1,4 @@
-# Test-only (varnujik fork): verify the HuggingFace Piper faber export runs on sherpa-onnx 1.13.6.
+# Test-only (varnujik fork): search for a Fun-ASR-MLT-Nano ONNX export.
 name: HF metadata
 on:
   push:
@@ -6,29 +6,24 @@ on:
 permissions:
   contents: read
 jobs:
-  faber:
+  search:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v7
-        with:
-          node-version: 22
-      - name: Download faber from HuggingFace
+      - name: Search Hugging Face
         run: |
-          base=https://huggingface.co/csukuangfj/vits-piper-pt_BR-faber-medium/resolve/4f385076a8f9d5bc7b4cd9fea4dc77e6e8ca8167
-          mkdir -p m/espeak-ng-data/lang/roa
-          curl -fsSL -o m/model.onnx $base/pt_BR-faber-medium.onnx
-          curl -fsSL -o m/tokens.txt $base/tokens.txt
-          for f in intonations phondata phondata-manifest phonindex phontab pt_dict lang/roa/pt lang/roa/pt-BR; do curl -fsSL -o m/espeak-ng-data/$f $base/espeak-ng-data/$f; done
-          sha256sum m/model.onnx m/espeak-ng-data/phondata | sed 's/^/SHA /'
-          stat -c 'SIZE %s %n' m/model.onnx
-      - name: Synthesize with sherpa-onnx-node 1.13.6
+          for q in Fun-ASR-MLT funasr-mlt mlt-nano Fun-ASR-Nano funasr-nano; do
+            curl -fsS "https://huggingface.co/api/models?search=$q&limit=50" | jq -r --arg q "$q" '.[] | "HF \($q) \(.id) dl=\(.downloads) \(.lastModified // "")"'
+          done
+      - name: Search ModelScope
         run: |
-          npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
-          cat > t.js <<'JS'
-          const s=require('sherpa-onnx-node');const j=require('path').join;
-          (async()=>{const tts=await s.OfflineTts.createAsync({model:{vits:{model:'m/model.onnx',tokens:'m/tokens.txt',dataDir:'m/espeak-ng-data'},numThreads:2,provider:'cpu'},maxNumSentences:1});
-          const a=tts.generate({text:'Olá! Esta é uma amostra da voz em português do Brasil.',sid:0,speed:1,enableExternalBuffer:false});
-          console.log('RESULT samples',a.samples.length,'seconds',(a.samples.length/a.sampleRate).toFixed(2));
-          let e=0;for(const x of a.samples)e+=x*x;console.log('RESULT rms',Math.sqrt(e/a.samples.length).toFixed(4));})().catch(e=>{console.log('RESULT ERROR',e.message);process.exit(1)});
-          JS
-          node t.js
+          for q in Fun-ASR-MLT FunASR-MLT mlt-nano FunASR-nano-onnx; do
+            curl -fsS -X PUT -H 'Content-Type: application/json' "https://www.modelscope.cn/api/v1/dolphin/models" \
+              -d "{\"PageSize\":30,\"PageNumber\":1,\"SortBy\":\"Default\",\"Target\":\"\",\"SingleCriterion\":[],\"Name\":\"$q\"}" \
+              | jq -r --arg q "$q" '.Data.Model.Models[]? | "MS \($q) \(.Path)/\(.Name)"' || echo "MS $q falhou"
+          done
+      - name: List files of candidates
+        run: |
+          for r in FunAudioLLM/Fun-ASR-MLT-Nano-2512 zengshuishui/FunASR-mlt-nano-onnx; do
+            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size)"' || echo "FILE $r inexistente"
+          done
+          curl -fsS "https://www.modelscope.cn/api/v1/models/zengshuishui/FunASR-nano-onnx/repo/files?Revision=master&Recursive=true" | jq -r '.Data.Files[] | "MSFILE zengshuishui/FunASR-nano-onnx \(.Path) \(.Size)"' || true
