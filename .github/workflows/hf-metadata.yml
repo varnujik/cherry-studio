@@ -1,4 +1,4 @@
-# Test-only (varnujik fork): search for a Fun-ASR-MLT-Nano ONNX export.
+# Test-only (varnujik fork): inspect Fun-ASR-MLT-Nano ONNX exports.
 name: HF metadata
 on:
   push:
@@ -6,24 +6,15 @@ on:
 permissions:
   contents: read
 jobs:
-  search:
+  inspect:
     runs-on: ubuntu-latest
     steps:
-      - name: Search Hugging Face
+      - name: Languages in official README
+        run: curl -fsSL https://huggingface.co/FunAudioLLM/Fun-ASR-MLT-Nano-2512/raw/main/README.md | grep -n -i -E "portug|language|languages|31" | sed 's/^/README /' | head -30
+      - name: Candidate repos
         run: |
-          for q in Fun-ASR-MLT funasr-mlt mlt-nano Fun-ASR-Nano funasr-nano; do
-            curl -fsS "https://huggingface.co/api/models?search=$q&limit=50" | jq -r --arg q "$q" '.[] | "HF \($q) \(.id) dl=\(.downloads) \(.lastModified // "")"'
+          for r in aoiandroid/fun-asr-mlt-nano-onnx-int8 luigi000/fun-asr-mlt-nano-onnx-int8 luigi000/fun-asr-mlt-nano-onnx-int8-1024 Oulasong/Funasr_Nano_MLT_ONNX; do
+            echo "REPO $r rev=$(curl -fsS https://huggingface.co/api/models/$r | jq -r '.sha + " license=" + ((.cardData.license // "") | tostring) + " created=" + (.createdAt // "")')"
+            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size) \(.lfs.oid // "")"'
+            curl -fsSL "https://huggingface.co/$r/raw/main/README.md" | head -60 | sed "s|^|RD $r: |"
           done
-      - name: Search ModelScope
-        run: |
-          for q in Fun-ASR-MLT FunASR-MLT mlt-nano FunASR-nano-onnx; do
-            curl -fsS -X PUT -H 'Content-Type: application/json' "https://www.modelscope.cn/api/v1/dolphin/models" \
-              -d "{\"PageSize\":30,\"PageNumber\":1,\"SortBy\":\"Default\",\"Target\":\"\",\"SingleCriterion\":[],\"Name\":\"$q\"}" \
-              | jq -r --arg q "$q" '.Data.Model.Models[]? | "MS \($q) \(.Path)/\(.Name)"' || echo "MS $q falhou"
-          done
-      - name: List files of candidates
-        run: |
-          for r in FunAudioLLM/Fun-ASR-MLT-Nano-2512 zengshuishui/FunASR-mlt-nano-onnx; do
-            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size)"' || echo "FILE $r inexistente"
-          done
-          curl -fsS "https://www.modelscope.cn/api/v1/models/zengshuishui/FunASR-nano-onnx/repo/files?Revision=master&Recursive=true" | jq -r '.Data.Files[] | "MSFILE zengshuishui/FunASR-nano-onnx \(.Path) \(.Size)"' || true
