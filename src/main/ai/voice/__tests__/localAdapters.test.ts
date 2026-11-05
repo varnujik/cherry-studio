@@ -4,6 +4,8 @@ import {
   APPLE_ASR_MODEL_ID,
   APPLE_TTS_MODEL_ID,
   FUNASR_MODEL_ID,
+  PARAKEET_MODEL_ID,
+  WHISPER_BASE_MODEL_ID,
   KOKORO_TTS_MODEL_ID,
   KOKORO_V1_TTS_MODEL_ID,
   PIPER_CADU_TTS_MODEL_ID,
@@ -45,15 +47,38 @@ describe('device-scoped voice catalog and request policy', () => {
   it.each([
     [
       { platform: 'darwin', arch: 'arm64', majorVersion: 26 },
-      [APPLE_ASR_MODEL_ID, APPLE_TTS_MODEL_ID, FUNASR_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]
+      [
+        APPLE_ASR_MODEL_ID,
+        APPLE_TTS_MODEL_ID,
+        FUNASR_MODEL_ID,
+        PARAKEET_MODEL_ID,
+        WHISPER_BASE_MODEL_ID,
+        ...SHERPA_TTS_MODEL_IDS
+      ]
     ],
     [
       { platform: 'win32', arch: 'x64' },
-      [WINDOWS_ASR_MODEL_ID, WINDOWS_TTS_MODEL_ID, FUNASR_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]
+      [
+        WINDOWS_ASR_MODEL_ID,
+        WINDOWS_TTS_MODEL_ID,
+        FUNASR_MODEL_ID,
+        PARAKEET_MODEL_ID,
+        WHISPER_BASE_MODEL_ID,
+        ...SHERPA_TTS_MODEL_IDS
+      ]
     ],
-    [{ platform: 'linux', arch: 'x64' }, [FUNASR_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]],
-    [{ platform: 'win32', arch: 'arm64' }, [FUNASR_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]],
-    [{ platform: 'darwin', arch: 'arm64', majorVersion: 12 }, [FUNASR_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]]
+    [
+      { platform: 'linux', arch: 'x64' },
+      [FUNASR_MODEL_ID, PARAKEET_MODEL_ID, WHISPER_BASE_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]
+    ],
+    [
+      { platform: 'win32', arch: 'arm64' },
+      [FUNASR_MODEL_ID, PARAKEET_MODEL_ID, WHISPER_BASE_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]
+    ],
+    [
+      { platform: 'darwin', arch: 'arm64', majorVersion: 12 },
+      [FUNASR_MODEL_ID, PARAKEET_MODEL_ID, WHISPER_BASE_MODEL_ID, ...SHERPA_TTS_MODEL_IDS]
+    ]
   ])('offers only runnable models on %j', (environment, expected) => {
     const catalog = listVoiceModels(environment)
     expect(catalog.models.map((model) => model.id).sort()).toEqual([...expected].sort())

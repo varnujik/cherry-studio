@@ -5,8 +5,9 @@ import kokoroRelease from './kokoro-v1.1.json'
 import mlxNodeRelease from './mlxNodeRelease.json'
 import piperPtBrRelease from './piper-pt-br.json'
 import qwen3AsrRelease from './qwen3AsrRelease.json'
+import sherpaAsrRelease from './sherpaAsrRelease.json'
 import sherpaRuntimeRelease from './sherpaRuntimeRelease.json'
-import type { ModelBundle, SharedArtifact, SharedArtifactId } from './types'
+import type { BundleFile, ModelBundle, SharedArtifact, SharedArtifactId } from './types'
 
 /**
  * Single source of truth for everything installable locally: which bundles exist,
@@ -215,6 +216,47 @@ function piperPtBrBundle(
       // Voice data licence; the weights are fine-tuned from Piper's English voices.
       license: { spdx: 'CC0-1.0', url: 'https://github.com/OHF-Voice/voice-datasets' },
       upstream: { url: 'https://huggingface.co/rhasspy/piper-voices', revision: piperPtBrRelease.upstreamRevision },
+/** Silero VAD shared by the sherpa-onnx ASR bundles; speech is decoded segment by segment. */
+const SILERO_VAD_FILE = {
+  key: 'voiceActivityDetector',
+  relPath: 'silero_vad.onnx',
+  sha256: 'a35ebf52fd3ce5f1469b2a36158dba761bc47b973ea3382b3186ca15b1f5af28',
+  sizeBytes: 1_807_522,
+  minBytes: 1_000_000,
+  weight: 2,
+  sources: [
+    {
+      source: 'huggingface',
+      repo: 'csukuangfj/vad',
+      revision: 'fba88cd2e921609e7675c3aaf51e0b9b295da4bc',
+      remoteFile: 'silero_vad.onnx'
+    },
+    {
+      source: 'hf-mirror',
+      repo: 'csukuangfj/vad',
+      revision: 'fba88cd2e921609e7675c3aaf51e0b9b295da4bc',
+      remoteFile: 'silero_vad.onnx'
+    }
+  ]
+} as const
+
+/** A multilingual sherpa-onnx ASR export pinned to one Hugging Face revision, plus the shared VAD. */
+function sherpaAsrBundle(
+  id: LocalModelBundleId,
+  release: (typeof sherpaAsrRelease)[keyof typeof sherpaAsrRelease],
+  installDirKey: 'feature.asr.parakeet' | 'feature.asr.whisper_base',
+  architecture: 'nemo-transducer' | 'whisper',
+  license: { spdx: string; url: string }
+): ModelBundle {
+  return {
+    id,
+    capability: 'asr',
+    installDirKey,
+    requires: ['sherpa-onnx'],
+    runtime: { architecture },
+    provenance: {
+      license,
+      upstream: release.upstream,
       conversion: {
         url: `https://huggingface.co/${release.repo}`,
         revision: release.revision,
@@ -237,6 +279,20 @@ function piperPtBrBundle(
         ]
       }
     })
+    files: [
+      ...release.files.map(
+        (file): BundleFile => ({
+          ...file,
+          minBytes: file.sizeBytes,
+          weight: Math.max(0.01, file.sizeBytes / 1_000_000),
+          sources: [
+            { source: 'huggingface', repo: release.repo, revision: release.revision, remoteFile: file.relPath },
+            { source: 'hf-mirror', repo: release.repo, revision: release.revision, remoteFile: file.relPath }
+          ]
+        })
+      ),
+      { ...SILERO_VAD_FILE, sources: [...SILERO_VAD_FILE.sources] }
+    ]
   }
 }
 
@@ -329,6 +385,20 @@ export const LOCAL_MODEL_BUNDLES = {
   },
   'piper-pt-br-faber-medium': piperPtBrBundle('piper-pt-br-faber-medium', 'faber', 'feature.tts.piper_faber'),
   'piper-pt-br-cadu-medium': piperPtBrBundle('piper-pt-br-cadu-medium', 'cadu', 'feature.tts.piper_cadu'),
+  'parakeet-tdt-0.6b-v3-int8': sherpaAsrBundle(
+    'parakeet-tdt-0.6b-v3-int8',
+    sherpaAsrRelease.parakeet,
+    'feature.asr.parakeet',
+    'nemo-transducer',
+    { spdx: 'CC-BY-4.0', url: 'https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3' }
+  ),
+  'whisper-base-int8': sherpaAsrBundle(
+    'whisper-base-int8',
+    sherpaAsrRelease.whisperBase,
+    'feature.asr.whisper_base',
+    'whisper',
+    { spdx: 'MIT', url: 'https://huggingface.co/openai/whisper-base' }
+  ),
   'qwen3-asr-1.7b-8bit': {
     id: 'qwen3-asr-1.7b-8bit',
     capability: 'asr',

@@ -342,6 +342,19 @@ checked before distribution.
 
 The Kokoro v1.0 bundle also exposes `ef_dora` (28), `if_sara` (35) and `im_nicola` (36), Spanish
 and Italian voices that read Portuguese phonemes with an accent, as extra pt-BR voices.
+### Multilingual speech recognition (Parakeet, Whisper base)
+
+FunASR Nano recognizes Chinese, English and Japanese only. Two more sherpa-onnx recognizers cover
+other languages, Brazilian Portuguese included. Both detect the spoken language themselves:
+
+- `parakeet-tdt-0.6b-v3-int8`: NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0), 25 European languages,
+  about 670 MB. It loads as a NeMo transducer (`nemo-transducer`).
+- `whisper-base-int8`: OpenAI Whisper base (MIT), 99 languages, about 160 MB. It loads as
+  `whisper` with an empty language, so Whisper detects it per segment.
+
+Both reuse FunASR's Silero VAD file and segmentation in the same `inference.asr` worker. Speech
+segments are decoded in chunks of at most 30 s, Whisper's window, instead of FunASR's
+KV-budget chunking. All files are pinned to Hugging Face revisions in `catalog/sherpaAsrRelease.json`.
 
 ## Management plane
 

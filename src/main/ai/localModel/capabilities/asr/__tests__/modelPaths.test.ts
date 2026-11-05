@@ -1,3 +1,5 @@
+import path from 'node:path'
+
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { localModelStorageService } from '../../../installation/LocalModelStorageService'
@@ -26,6 +28,27 @@ describe('selected ASR model resolution', () => {
     vi.spyOn(localModelStorageService, 'isArtifactReady').mockReturnValue(true)
     expect(resolveAsrModelPaths('funasr-nano-int8')).toMatchObject({ engine: 'sherpa' })
     expect(() => resolveAsrModelPaths('qwen3-asr-1.7b-8bit')).toThrow('not fully downloaded')
+  })
+
+  it('resolves Parakeet to its nemo-transducer files and the shared VAD', () => {
+    vi.spyOn(localModelStorageService, 'resolveInstalledDir').mockReturnValue('/models/parakeet')
+    vi.spyOn(localModelStorageService, 'isArtifactReady').mockReturnValue(true)
+    const config = resolveAsrModelPaths('parakeet-tdt-0.6b-v3-int8')
+    expect(config).toMatchObject({ engine: 'sherpa', modelPaths: { kind: 'nemo-transducer' } })
+    const paths = (config as { modelPaths: Record<string, string> }).modelPaths
+    for (const key of ['encoder', 'decoder', 'joiner', 'tokens', 'voiceActivityDetector'])
+      expect(paths[key].startsWith(path.join('/models/parakeet') + path.sep)).toBe(true)
+    expect(path.basename(paths.voiceActivityDetector)).toBe('silero_vad.onnx')
+  })
+
+  it('resolves Whisper to its encoder/decoder/tokens without a joiner', () => {
+    vi.spyOn(localModelStorageService, 'resolveInstalledDir').mockReturnValue('/models/whisper')
+    vi.spyOn(localModelStorageService, 'isArtifactReady').mockReturnValue(true)
+    const config = resolveAsrModelPaths('whisper-base-int8')
+    expect(config).toMatchObject({ engine: 'sherpa', modelPaths: { kind: 'whisper' } })
+    const paths = (config as { modelPaths: Record<string, string> }).modelPaths
+    expect(Object.keys(paths).sort()).toEqual(['decoder', 'encoder', 'kind', 'tokens', 'voiceActivityDetector'])
+    expect(paths.encoder).not.toBe(paths.decoder)
   })
 
   it('rejects a bundle from another capability', () => {
