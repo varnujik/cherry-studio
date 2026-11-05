@@ -35,6 +35,7 @@ jobs:
             src/main/ai/localModel/capabilities/asr/__tests__/modelPaths.test.ts \
             src/main/ai/localModel/runtime/__tests__/KokoroTts.test.ts \
             src/main/ai/localModel/runtime/__tests__/inferenceEntryTts.test.ts \
+            src/main/ai/localModel/runtime/__tests__/inferenceEntryFunAsr.test.ts \
             src/main/ai/voice/__tests__/localAdapters.test.ts \
             src/main/ai/voice/__tests__/voicePlatform.test.ts \
             src/main/ai/voice/__tests__/voiceConfiguration.test.ts \
