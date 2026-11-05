@@ -6056,7 +6056,6 @@
   "settings.voice.model.parakeet": "Parakeet TDT 0.6B v3 (đa ngôn ngữ)",
   "settings.voice.model.qwen3_asr": "Qwen3-ASR 1.7B (8-bit)",
   "settings.voice.model.qwen3_tts": "Qwen3-TTS CustomVoice (8-bit)",
-  "settings.voice.model.whisper_base": "Whisper base (đa ngôn ngữ)",
   "settings.voice.model.windows_asr": "Nhận dạng giọng nói hệ thống Windows",
   "settings.voice.model.windows_tts": "Giọng nói hệ thống Windows",
   "settings.voice.mouse_hold.description": "Nhấn giữ nút chuột trái trong ô nhập giọng nói trong 800 mili giây để bắt đầu nói. Thả nút để chèn văn bản. Kéo để chọn văn bản sẽ không kích hoạt nhập giọng nói.",

@@ -34,8 +34,7 @@ class Vad {
 }
 class OfflineRecognizer {
   constructor(config) {
-    if ((config.modelConfig.funasrNano?.encoderAdaptor ?? config.modelConfig.whisper?.encoder) ===
-      '/models/unloadable-encoder.onnx') {
+    if (config.modelConfig.funasrNano?.encoderAdaptor === '/models/unloadable-encoder.onnx') {
       throw new Error('Recognizer cannot load this model')
     }
     this.config = config
@@ -217,52 +216,27 @@ describe('ASR entry transcribe', () => {
     })
   })
 
-  it('configures Whisper for automatic language detection and transcription', async () => {
+  it('splits Parakeet speech longer than 30 s into 30 s chunks', async () => {
     const modelPaths = {
-      kind: 'whisper' as const,
-      encoder: '/models/whisper/base-encoder.int8.onnx',
-      decoder: '/models/whisper/base-decoder.int8.onnx',
-      tokens: '/models/whisper/base-tokens.txt',
-      voiceActivityDetector: MODEL_PATHS.voiceActivityDetector
+      kind: 'nemo-transducer' as const,
+      encoder: '/e.onnx',
+      decoder: '/d.onnx',
+      joiner: '/j.onnx',
+      tokens: '/t.txt',
+      voiceActivityDetector: '/v.onnx'
     }
+    const windows = 1100
     const result = await asr.transcribe({
       engine: 'sherpa',
       modelPaths,
-      source: { kind: 'samples', samples: audio(speech(2, 3), silence(1)), sampleRate: SAMPLE_RATE }
+      source: { kind: 'samples', samples: audio(speech(windows), silence(1)), sampleRate: SAMPLE_RATE }
     })
-    expect(JSON.parse(result.text)).toMatchObject({
-      whisper: { encoder: modelPaths.encoder, decoder: modelPaths.decoder, language: '', task: 'transcribe' },
-      tokens: modelPaths.tokens
-    })
+    expect(result.segments.map((segment) => segment.text)).toEqual([
+      'decoded 480000@16000',
+      `decoded ${windows * WINDOW - 480_000}@16000`
+    ])
+    expect(result.segments[1].start).toBe(30)
   })
-
-  it.each(['nemo-transducer', 'whisper'] as const)(
-    'splits %s speech longer than 30 s into 30 s chunks',
-    async (kind) => {
-      const modelPaths =
-        kind === 'whisper'
-          ? { kind, encoder: '/e.onnx', decoder: '/d.onnx', tokens: '/t.txt', voiceActivityDetector: '/v.onnx' }
-          : {
-              kind,
-              encoder: '/e.onnx',
-              decoder: '/d.onnx',
-              joiner: '/j.onnx',
-              tokens: '/t.txt',
-              voiceActivityDetector: '/v.onnx'
-            }
-      const windows = 1100
-      const result = await asr.transcribe({
-        engine: 'sherpa',
-        modelPaths,
-        source: { kind: 'samples', samples: audio(speech(windows), silence(1)), sampleRate: SAMPLE_RATE }
-      })
-      expect(result.segments.map((segment) => segment.text)).toEqual([
-        'decoded 480000@16000',
-        `decoded ${windows * WINDOW - 480_000}@16000`
-      ])
-      expect(result.segments[1].start).toBe(30)
-    }
-  )
 
   it('does not log transcript text or input paths', async () => {
     const canary = 'PRIVATE_TRANSCRIPT_CANARY'

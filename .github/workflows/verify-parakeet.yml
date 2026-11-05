@@ -1,0 +1,32 @@
+# Test-only (varnujik fork): checks for the Parakeet PR branch. No build, no artifacts.
+name: Verify Parakeet
+on:
+  push:
+    branches: [test/verify-parakeet]
+permissions:
+  contents: read
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: ".node-version"
+      - uses: pnpm/action-setup@v5
+      - run: pnpm install
+      - run: pnpm typecheck
+      - run: pnpm i18n:check
+      - run: |
+          pnpm test:main \
+            src/main/ai/localModel/__tests__/LocalModelService.test.ts \
+            src/main/ai/localModel/catalog/__tests__/catalog.test.ts \
+            src/main/ai/localModel/capabilities/asr/__tests__/AsrInferenceService.test.ts \
+            src/main/ai/localModel/capabilities/asr/__tests__/modelPaths.test.ts \
+            src/main/ai/localModel/runtime/__tests__/inferenceEntryFunAsr.test.ts \
+            src/main/ai/voice/__tests__/localAdapters.test.ts \
+            src/main/ai/voice/__tests__/voicePlatform.test.ts \
+            src/main/ai/voice/__tests__/voiceConfiguration.test.ts \
+            src/main/ai/voice/localAdapters/__tests__/funasr.test.ts
+          pnpm test:shared src/shared/ipc/schemas/__tests__/voice.test.ts
+          pnpm test:renderer src/renderer/pages/settings/VoiceSettings/__tests__/VoiceSettings.test.tsx

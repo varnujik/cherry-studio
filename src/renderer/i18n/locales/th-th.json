@@ -6056,7 +6056,6 @@
   "settings.voice.model.parakeet": "Parakeet TDT 0.6B v3 (หลายภาษา)",
   "settings.voice.model.qwen3_asr": "Qwen3-ASR 1.7B (8-bit)",
   "settings.voice.model.qwen3_tts": "Qwen3-TTS CustomVoice (8-bit)",
-  "settings.voice.model.whisper_base": "Whisper base (หลายภาษา)",
   "settings.voice.model.windows_asr": "การจดจำเสียงระบบของ Windows",
   "settings.voice.model.windows_tts": "เสียงระบบของ Windows",
   "settings.voice.mouse_hold.description": "กดปุ่มซ้ายของเมาส์ค้างไว้ในช่องป้อนข้อความด้วยเสียงเป็นเวลา 800 มิลลิวินาทีเพื่อเริ่มพูด ปล่อยปุ่มเพื่อแทรกข้อความ การลากเพื่อเลือกข้อความจะไม่เริ่มการป้อนข้อความด้วยเสียง",

@@ -20,7 +20,6 @@ export type SherpaAsrModelPaths =
       tokens: string
       voiceActivityDetector: string
     }
-  | { kind: 'whisper'; encoder: string; decoder: string; tokens: string; voiceActivityDetector: string }
 
 export type AsrTranscribeSource =
   | { kind: 'wav'; filePath: string }

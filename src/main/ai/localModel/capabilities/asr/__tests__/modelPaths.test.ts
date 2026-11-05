@@ -41,16 +41,6 @@ describe('selected ASR model resolution', () => {
     expect(path.basename(paths.voiceActivityDetector)).toBe('silero_vad.onnx')
   })
 
-  it('resolves Whisper to its encoder/decoder/tokens without a joiner', () => {
-    vi.spyOn(localModelStorageService, 'resolveInstalledDir').mockReturnValue('/models/whisper')
-    vi.spyOn(localModelStorageService, 'isArtifactReady').mockReturnValue(true)
-    const config = resolveAsrModelPaths('whisper-base-int8')
-    expect(config).toMatchObject({ engine: 'sherpa', modelPaths: { kind: 'whisper' } })
-    const paths = (config as { modelPaths: Record<string, string> }).modelPaths
-    expect(Object.keys(paths).sort()).toEqual(['decoder', 'encoder', 'kind', 'tokens', 'voiceActivityDetector'])
-    expect(paths.encoder).not.toBe(paths.decoder)
-  })
-
   it('rejects a bundle from another capability', () => {
     expect(() => resolveAsrModelPaths('qwen3-tts-0.6b-customvoice-8bit')).toThrow('Unsupported ASR')
   })

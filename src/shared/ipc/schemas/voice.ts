@@ -7,7 +7,6 @@ import {
   KOKORO_TTS_MODEL_ID,
   FUNASR_MODEL_ID,
   PARAKEET_MODEL_ID,
-  WHISPER_BASE_MODEL_ID,
   QWEN3_ASR_MODEL_ID,
   LOCAL_VOICE_MODEL_IDS,
   type LocalVoiceModelDescriptor,
@@ -69,7 +68,6 @@ const asrModelId = z.enum([
   WINDOWS_ASR_MODEL_ID,
   FUNASR_MODEL_ID,
   PARAKEET_MODEL_ID,
-  WHISPER_BASE_MODEL_ID,
   QWEN3_ASR_MODEL_ID
 ])
 const speechInput = sessionAdmission

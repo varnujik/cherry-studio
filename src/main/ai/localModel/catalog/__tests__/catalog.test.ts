@@ -110,8 +110,7 @@ describe('local model catalog', () => {
   })
 
   it.each([
-    ['parakeet-tdt-0.6b-v3-int8', ['encoder', 'decoder', 'joiner', 'tokens', 'voiceActivityDetector']],
-    ['whisper-base-int8', ['encoder', 'decoder', 'tokens', 'voiceActivityDetector']]
+    ['parakeet-tdt-0.6b-v3-int8', ['encoder', 'decoder', 'joiner', 'tokens', 'voiceActivityDetector']]
   ] as const)('%s is a pinned sherpa-onnx ASR bundle with its VAD', (id, keys) => {
     const bundle = LOCAL_MODEL_BUNDLES[id]
 

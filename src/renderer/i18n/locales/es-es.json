@@ -6056,7 +6056,6 @@
   "settings.voice.model.parakeet": "Parakeet TDT 0.6B v3 (multilingüe)",
   "settings.voice.model.qwen3_asr": "Qwen3-ASR 1.7B (8-bit)",
   "settings.voice.model.qwen3_tts": "Qwen3-TTS CustomVoice (8-bit)",
-  "settings.voice.model.whisper_base": "Whisper base (multilingüe)",
   "settings.voice.model.windows_asr": "Reconocimiento de voz del sistema Windows",
   "settings.voice.model.windows_tts": "Voz del sistema Windows",
   "settings.voice.mouse_hold.description": "Mantén pulsado el botón izquierdo del ratón en un campo de dictado durante 800 ms para hablar. Suéltalo para insertar el texto. Arrastrar para seleccionar texto no activa el dictado.",

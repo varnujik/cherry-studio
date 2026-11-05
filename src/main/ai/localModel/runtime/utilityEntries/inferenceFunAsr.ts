@@ -16,7 +16,7 @@ import { cacheResource, getSherpa } from './inferenceRuntime'
 const VAD_WINDOW_SIZE = 512
 const ASR_NUM_THREADS = Math.min(4, availableParallelism())
 const COPY_NATIVE_SAMPLES = false
-// Whisper decodes at most 30 s per pass; the same cap keeps Parakeet's memory bounded.
+// Parakeet decodes speech in bounded chunks to keep its encoder memory bounded.
 const SEGMENT_MODEL_MAX_SECONDS = 30
 
 function modelLoadFailure(error: unknown): Error & { code: string } {
@@ -42,12 +42,6 @@ function recognizerModelConfig(modelPaths: SherpaAsrModelPaths) {
         transducer: { encoder: modelPaths.encoder, decoder: modelPaths.decoder, joiner: modelPaths.joiner },
         tokens: modelPaths.tokens,
         modelType: 'nemo_transducer'
-      }
-    case 'whisper':
-      // An empty language lets Whisper detect it per segment.
-      return {
-        whisper: { encoder: modelPaths.encoder, decoder: modelPaths.decoder, language: '', task: 'transcribe' },
-        tokens: modelPaths.tokens
       }
   }
 }

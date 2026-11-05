@@ -8,21 +8,11 @@ import { afterEach, assert, beforeEach, describe, expect, it, vi } from 'vitest'
 import { application } from '@application'
 import type { AsrInferenceService } from '@main/ai/localModel'
 import { UtilityProcessError } from '@main/core/utilityProcess/UtilityProcessError'
-import {
-  FUNASR_MODEL_ID,
-  PARAKEET_BUNDLE_ID,
-  PARAKEET_MODEL_ID,
-  WHISPER_BASE_BUNDLE_ID,
-  WHISPER_BASE_MODEL_ID
-} from '@shared/ai/localVoice'
+import { FUNASR_MODEL_ID, PARAKEET_BUNDLE_ID, PARAKEET_MODEL_ID } from '@shared/ai/localVoice'
 import { TranscriptionInputKind } from '@shared/ai/voice'
 
 import { downloadVoiceModel, getLocalVoiceStatus } from '../../localAdapters'
-import {
-  createFunAsrTranscriptionModel,
-  parakeetTranscriptionDefinition,
-  whisperBaseTranscriptionDefinition
-} from '../funasr'
+import { createFunAsrTranscriptionModel, parakeetTranscriptionDefinition } from '../funasr'
 
 const mocks = vi.hoisted(() => ({
   decode: vi.fn(),
@@ -150,10 +140,7 @@ describe('FunASR local adapter', () => {
     expect(mocks.transcribe).not.toHaveBeenCalled()
   })
 
-  it.each([
-    [parakeetTranscriptionDefinition, PARAKEET_MODEL_ID, PARAKEET_BUNDLE_ID],
-    [whisperBaseTranscriptionDefinition, WHISPER_BASE_MODEL_ID, WHISPER_BASE_BUNDLE_ID]
-  ] as const)(
+  it.each([[parakeetTranscriptionDefinition, PARAKEET_MODEL_ID, PARAKEET_BUNDLE_ID]] as const)(
     '%#: transcribes with its own bundle and rejects an explicit language',
     async (definition, modelId, bundleId) => {
       expect(definition.id).toBe(modelId)

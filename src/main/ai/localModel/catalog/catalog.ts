@@ -225,8 +225,8 @@ const SILERO_VAD_FILE = {
 function sherpaAsrBundle(
   id: LocalModelBundleId,
   release: (typeof sherpaAsrRelease)[keyof typeof sherpaAsrRelease],
-  installDirKey: 'feature.asr.parakeet' | 'feature.asr.whisper_base',
-  architecture: 'nemo-transducer' | 'whisper',
+  installDirKey: 'feature.asr.parakeet',
+  architecture: 'nemo-transducer',
   license: { spdx: string; url: string }
 ): ModelBundle {
   return {
@@ -305,13 +305,6 @@ export const LOCAL_MODEL_BUNDLES = {
     'feature.asr.parakeet',
     'nemo-transducer',
     { spdx: 'CC-BY-4.0', url: 'https://huggingface.co/nvidia/parakeet-tdt-0.6b-v3' }
-  ),
-  'whisper-base-int8': sherpaAsrBundle(
-    'whisper-base-int8',
-    sherpaAsrRelease.whisperBase,
-    'feature.asr.whisper_base',
-    'whisper',
-    { spdx: 'MIT', url: 'https://huggingface.co/openai/whisper-base' }
   ),
   'qwen3-asr-1.7b-8bit': {
     id: 'qwen3-asr-1.7b-8bit',

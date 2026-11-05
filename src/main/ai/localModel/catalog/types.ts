@@ -135,7 +135,7 @@ export interface ModelBundle {
    * quantization selector, which must match the weights file the bundle actually installs. */
   runtime?: {
     dtype?: string
-    architecture?: 'funasr-nano' | 'nemo-transducer' | 'whisper' | 'qwen3-asr' | 'qwen3-tts' | 'kokoro'
+    architecture?: 'funasr-nano' | 'nemo-transducer' | 'qwen3-asr' | 'qwen3-tts' | 'kokoro'
   }
   provenance?: CatalogProvenance
 }

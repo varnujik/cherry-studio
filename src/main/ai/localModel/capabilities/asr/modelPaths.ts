@@ -28,17 +28,6 @@ export function resolveAsrModelPaths(modelId: LocalModelBundleId): AsrModelConfi
         voiceActivityDetector
       }
     }
-  if (architecture === 'whisper')
-    return {
-      engine: AsrEngine.Sherpa,
-      modelPaths: {
-        kind: 'whisper',
-        encoder: filePath('encoder'),
-        decoder: filePath('decoder'),
-        tokens: filePath('tokens'),
-        voiceActivityDetector
-      }
-    }
   if (architecture !== 'funasr-nano') throw new Error('Unsupported ASR model configuration')
   return {
     engine: AsrEngine.Sherpa,

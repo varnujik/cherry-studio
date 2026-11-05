@@ -10,14 +10,7 @@ import { UtilityProcessError } from '@main/core/utilityProcess/UtilityProcessErr
 import { regionService } from '@main/services/RegionService'
 import { FUNASR_SUPPORTED_PLATFORM_KEYS } from '@shared/ai/localVoice'
 import { LOCAL_VOICE_MODELS, VoiceModelSupport, VoiceResourceOperation } from '@shared/ai/localVoice'
-import {
-  FUNASR_BUNDLE_ID,
-  FUNASR_MODEL_ID,
-  PARAKEET_BUNDLE_ID,
-  PARAKEET_MODEL_ID,
-  WHISPER_BASE_BUNDLE_ID,
-  WHISPER_BASE_MODEL_ID
-} from '@shared/ai/localVoice'
+import { FUNASR_BUNDLE_ID, FUNASR_MODEL_ID, PARAKEET_BUNDLE_ID, PARAKEET_MODEL_ID } from '@shared/ai/localVoice'
 import { LOCAL_MODEL_STATUS_CACHE_KEY } from '@shared/data/presets/localModel'
 
 import type { TranscriptionModelDefinition } from '../voiceModelTypes'
@@ -36,15 +29,14 @@ const ASR_INFERENCE_TIMEOUT_MS = 120_000
 const ASR_INFERENCE_REALTIME_FACTOR = 2
 const logger = loggerService.withContext('FunAsrAdapter')
 
-/** A downloadable sherpa-onnx recognizer: FunASR Nano, Parakeet or Whisper. All detect the language themselves. */
+/** A downloadable sherpa-onnx recognizer: FunASR Nano or Parakeet. Both detect the language themselves. */
 interface SherpaAsrVariant {
-  modelId: typeof FUNASR_MODEL_ID | typeof PARAKEET_MODEL_ID | typeof WHISPER_BASE_MODEL_ID
-  bundleId: typeof FUNASR_BUNDLE_ID | typeof PARAKEET_BUNDLE_ID | typeof WHISPER_BASE_BUNDLE_ID
+  modelId: typeof FUNASR_MODEL_ID | typeof PARAKEET_MODEL_ID
+  bundleId: typeof FUNASR_BUNDLE_ID | typeof PARAKEET_BUNDLE_ID
 }
 
 const FUNASR: SherpaAsrVariant = { modelId: FUNASR_MODEL_ID, bundleId: FUNASR_BUNDLE_ID }
 const PARAKEET: SherpaAsrVariant = { modelId: PARAKEET_MODEL_ID, bundleId: PARAKEET_BUNDLE_ID }
-const WHISPER_BASE: SherpaAsrVariant = { modelId: WHISPER_BASE_MODEL_ID, bundleId: WHISPER_BASE_BUNDLE_ID }
 
 function normalizeFailure(error: unknown, signal?: AbortSignal): VoiceRuntimeError {
   if (signal?.aborted) return new VoiceRuntimeError('aborted')
@@ -215,4 +207,3 @@ function createSherpaTranscriptionDefinition(variant: SherpaAsrVariant): Transcr
 
 export const funAsrTranscriptionDefinition = createSherpaTranscriptionDefinition(FUNASR)
 export const parakeetTranscriptionDefinition = createSherpaTranscriptionDefinition(PARAKEET)
-export const whisperBaseTranscriptionDefinition = createSherpaTranscriptionDefinition(WHISPER_BASE)

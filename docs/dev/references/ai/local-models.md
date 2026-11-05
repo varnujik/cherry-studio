@@ -313,18 +313,13 @@ Chinese and English. Language preferences select a default voice; they do not sp
 text into separate synthesis requests. The existing host stops the process before changing
 model bundles, on cancellation, or before removing resident model files.
 
-### Multilingual speech recognition (Parakeet, Whisper base)
+### Multilingual speech recognition (Parakeet)
 
-FunASR Nano recognizes Chinese, English and Japanese only. Two more sherpa-onnx recognizers cover
-other languages, Brazilian Portuguese included. Both detect the spoken language themselves:
-
-- `parakeet-tdt-0.6b-v3-int8`: NVIDIA Parakeet TDT 0.6B v3 (CC-BY-4.0), 25 European languages,
-  about 670 MB. It loads as a NeMo transducer (`nemo-transducer`).
-- `whisper-base-int8`: OpenAI Whisper base (MIT), 99 languages, about 160 MB. It loads as
-  `whisper` with an empty language, so Whisper detects it per segment.
-
-Both reuse FunASR's Silero VAD file and segmentation in the same `inference.asr` worker. Speech
-segments are decoded in chunks of at most 30 s, Whisper's window, instead of FunASR's
+FunASR Nano recognizes Chinese, English and Japanese only. `parakeet-tdt-0.6b-v3-int8`, NVIDIA
+Parakeet TDT 0.6B v3 (CC-BY-4.0, about 670 MB), covers 25 European languages, Brazilian Portuguese
+included, and detects the spoken language itself. It loads as a NeMo transducer
+(`nemo-transducer`) in the same `inference.asr` worker, reusing FunASR's Silero VAD file and
+segmentation. Speech segments are decoded in chunks of at most 30 s instead of FunASR's
 KV-budget chunking. All files are pinned to Hugging Face revisions in `catalog/sherpaAsrRelease.json`.
 
 ## Management plane

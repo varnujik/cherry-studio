@@ -50,7 +50,6 @@ export const LOCAL_MODEL_BUNDLE_IDS = [
   'pp-ocrv6-medium',
   'funasr-nano-int8',
   'parakeet-tdt-0.6b-v3-int8',
-  'whisper-base-int8',
   'qwen3-asr-1.7b-8bit',
   'qwen3-tts-0.6b-customvoice-8bit',
   'kokoro-multi-lang-v1.1'

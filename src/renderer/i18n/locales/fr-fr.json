@@ -6056,7 +6056,6 @@
   "settings.voice.model.parakeet": "Parakeet TDT 0.6B v3 (multilingue)",
   "settings.voice.model.qwen3_asr": "Qwen3-ASR 1.7B (8-bit)",
   "settings.voice.model.qwen3_tts": "Qwen3-TTS CustomVoice (8-bit)",
-  "settings.voice.model.whisper_base": "Whisper base (multilingue)",
   "settings.voice.model.windows_asr": "Reconnaissance vocale du système Windows",
   "settings.voice.model.windows_tts": "Voix système Windows",
   "settings.voice.mouse_hold.description": "Maintenez le bouton gauche de la souris dans un champ de dictée pendant 800 ms pour parler. Relâchez pour insérer le texte. Faire glisser pour sélectionner du texte ne lance pas la dictée.",
