@@ -1,4 +1,4 @@
-# Test-only (varnujik fork): inspect Fun-ASR-MLT-Nano ONNX exports.
+# Test-only (varnujik fork): transcribe pt-BR samples with Fun-ASR-MLT-Nano on sherpa-onnx 1.13.6.
 name: HF metadata
 on:
   push:
@@ -6,15 +6,22 @@ on:
 permissions:
   contents: read
 jobs:
-  inspect:
+  mlt:
     runs-on: ubuntu-latest
     steps:
-      - name: Languages in official README
-        run: curl -fsSL https://huggingface.co/FunAudioLLM/Fun-ASR-MLT-Nano-2512/raw/main/README.md | grep -n -i -E "portug|language|languages|31" | sed 's/^/README /' | head -30
-      - name: Candidate repos
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+      - name: Download model
         run: |
-          for r in aoiandroid/fun-asr-mlt-nano-onnx-int8 luigi000/fun-asr-mlt-nano-onnx-int8 luigi000/fun-asr-mlt-nano-onnx-int8-1024 Oulasong/Funasr_Nano_MLT_ONNX; do
-            echo "REPO $r rev=$(curl -fsS https://huggingface.co/api/models/$r | jq -r '.sha + " license=" + ((.cardData.license // "") | tostring) + " created=" + (.createdAt // "")')"
-            curl -fsS "https://huggingface.co/api/models/$r/tree/main?recursive=true" | jq -r --arg r "$r" '.[] | select(.type=="file") | "FILE \($r) \(.path) \(.size) \(.lfs.oid // "")"'
-            curl -fsSL "https://huggingface.co/$r/raw/main/README.md" | head -60 | sed "s|^|RD $r: |"
-          done
+          base=https://huggingface.co/luigi000/fun-asr-mlt-nano-onnx-int8/resolve/932d7dbb98623bd31314015b3bc0dac0dcf80acc
+          mkdir -p m/tokenizer
+          for f in encoder_adaptor.int8.onnx llm.int8.onnx embedding.int8.onnx tokenizer/config.json tokenizer/generation_config.json tokenizer/merges.txt tokenizer/tokenizer.json tokenizer/tokenizer_config.json tokenizer/vocab.json LICENSE; do curl -fsSL -o m/$f $base/$f; done
+          sha256sum m/*.onnx m/tokenizer/* m/LICENSE | sed 's/^/SHA /'; stat -c 'SIZE %s %n' m/tokenizer/* m/LICENSE
+      - name: Transcribe
+        run: |
+          npm init -y >/dev/null && npm install sherpa-onnx-node@1.13.6 >/dev/null
+          TAG=mlt-padrao node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
+          TAG=mlt-葡萄牙语 FLANG=葡萄牙语 node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
+          TAG=mlt-Portuguese FLANG=Portuguese node .github/asr-test/asr.js m .github/asr-test 2>/dev/null
