@@ -119,8 +119,9 @@ describe('local model catalog', () => {
     expect(bundle.files.map((file) => file.key).sort()).toEqual([...keys].sort())
     for (const file of bundle.files) {
       expect(file.sha256).toMatch(/^[0-9a-f]{64}$/)
-      expect(file.sources.length).toBeGreaterThan(0)
-      for (const source of file.sources) expect(source.revision).toMatch(/^[0-9a-f]{40}$/)
+      const sources = file.sources ?? []
+      expect(sources.length).toBeGreaterThan(0)
+      for (const source of sources) expect(source.revision).toMatch(/^[0-9a-f]{40}$/)
     }
   })
 
